@@ -239,6 +239,23 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  .tutorial-actions .secondary,.tutorial-actions .primary{font-size:12px;padding:8px 10px}
 }
 
+
+.tutorial-highlight::after{
+ content:"";
+ position:absolute;
+ pointer-events:none;
+ width:12px;height:12px;
+ border-radius:50%;
+ background:var(--accent);
+ right:-8px;top:-8px;
+ box-shadow:0 0 0 5px rgba(255,213,74,.18);
+ animation:tutorialPulse 1.2s ease-in-out infinite;
+}
+@keyframes tutorialPulse{
+ 0%,100%{transform:scale(.9);opacity:.8}
+ 50%{transform:scale(1.25);opacity:1}
+}
+
 </style>
 </head>
 
@@ -248,7 +265,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · INTERACTIVE FIRST-PACK TUTORIAL 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · TUTORIAL SCROLL FIX 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">120 cards</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="level-chip">Lv <span id="headerLevel">1</span> · 🪙 <span id="headerCoins">0</span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button></div>
@@ -1007,9 +1024,57 @@ function positionTutorialCard(target){
  card.classList.remove('tutorial-top','tutorial-bottom');
  if(!target){card.classList.add('tutorial-bottom');return}
  const r=target.getBoundingClientRect();
+ const vh=window.innerHeight||document.documentElement.clientHeight||800;
  // Put instructions opposite the highlighted control/card.
- if((r.top+r.height/2) > window.innerHeight*.52)card.classList.add('tutorial-top');
+ if((r.top+r.height/2) > vh*.52)card.classList.add('tutorial-top');
  else card.classList.add('tutorial-bottom');
+}
+function scrollTutorialTargetIntoView(target){
+ const scroller=document.getElementById('appScroller');
+ if(!target||!scroller)return;
+ const sr=scroller.getBoundingClientRect();
+ const tr=target.getBoundingClientRect();
+ const card=tutorialCardEl();
+ const reserve=card?Math.min(card.getBoundingClientRect().height+26,230):180;
+
+ // Aim to place the highlighted target around the center of the available
+ // space, leaving room for the tutorial card on the opposite side.
+ const targetCenter=(tr.top-sr.top)+scroller.scrollTop+(tr.height/2);
+ const visibleH=scroller.clientHeight;
+ const desiredCenter=visibleH*.46;
+ let nextTop=Math.max(0,targetCenter-desiredCenter);
+
+ // Clamp to actual scrollable range.
+ nextTop=Math.min(nextTop,Math.max(0,scroller.scrollHeight-visibleH));
+ scroller.scrollTop=nextTop;
+ try{scroller.scrollTo({top:nextTop,left:0,behavior:'auto'})}catch(_){}
+
+ // If the target is still obscured by the tutorial card or nav, nudge it.
+ requestAnimationFrame(()=>{
+   const rr=target.getBoundingClientRect();
+   const nav=document.querySelector('.nav');
+   const navTop=nav?nav.getBoundingClientRect().top:window.innerHeight;
+   const cardRect=card?card.getBoundingClientRect():null;
+   let delta=0;
+
+   if(cardRect){
+     const overlaps=!(rr.bottom<cardRect.top || rr.top>cardRect.bottom);
+     if(overlaps){
+       if(cardRect.top < window.innerHeight/2) delta=rr.top-cardRect.bottom-18;
+       else delta=rr.bottom-cardRect.top+18;
+     }
+   }
+
+   if(rr.bottom>navTop-10) delta=Math.max(delta,rr.bottom-(navTop-16));
+   if(rr.top<12) delta=Math.min(delta,rr.top-18);
+
+   if(Math.abs(delta)>2){
+     scroller.scrollTop=Math.max(0,Math.min(
+       scroller.scrollTop+delta,
+       Math.max(0,scroller.scrollHeight-scroller.clientHeight)
+     ));
+   }
+ });
 }
 function setTutorialActionState(step){
  const waiting=!!step.action;
@@ -1048,10 +1113,15 @@ function renderTutorialStep(){
    if(!target){positionTutorialCard(null);return}
    tutorialTarget=target;
    target.classList.add('tutorial-highlight');
-   try{target.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'})}catch(_){}
-   requestAnimationFrame(()=>positionTutorialCard(target));
+   scrollTutorialTargetIntoView(target);
+   requestAnimationFrame(()=>{
+     positionTutorialCard(target);
+     scrollTutorialTargetIntoView(target);
+   });
  };
- requestAnimationFrame(()=>requestAnimationFrame(focus));
+ // switchView intentionally resets tab scroll after render. Run tutorial
+ // scrolling after those resets so the highlighted control remains visible.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(focus,120)));
 }
 function goToTutorialStep(id){
  const idx=TUTORIAL_STEPS.findIndex(s=>s.id===id);
