@@ -1089,7 +1089,7 @@ function makeHighClassBox(){const s=currentSet();box=Array.from({length:s.packsP
  if(Math.random()<.35){const x=Math.random();put(x<.02&&pools.MUR.length?pick(pools.MUR):x<.58&&pools.SAR.length?pick(pools.SAR):pick(pools.SR))}
  box.forEach((p,i)=>p.cards=makeHighClassPack(specialMap.get(i)||null))}
 function makeBox(){autoCancel=true;autoRunning=false;autoPauseCardId=null;skipPack.textContent='Finish Pack';skipPack.classList.remove('auto-active');sessionPulled=0;sessionBig=0;openQueue=[];queueIndex=0;batchRemainingTotal=0;prepareGeneratedBox(true)}
-function resetStage(){cardShell.hidden=true;swipeCard.style.visibility='visible';swipeCard.style.transition='';swipeCard.style.transform='';swipeCard.style.opacity='1';cardStackLayer.innerHTML='';stackCount.textContent='';emptyState.hidden=true;emptyState.innerHTML='';pullName.textContent='';pullNo.textContent='';hitLine.textContent='';rarityTag.textContent='';rarityTag.className='rarity-tag';rarityTag.style.display='none';swipeCard.classList.remove('new-card');pullNext.disabled=true;skipPack.disabled=true;nextPack.hidden=true;cardShown=false;boosterWrap.className='booster-wrap';openPack.disabled=box[selected]?.opened||false;packStatus.classList.remove('god-pack');packStatus.textContent=box[selected]?.opened?'That pack is already opened. Choose another below.':`Pack ${selected+1} selected.`;document.querySelector('.stage-top h2').textContent='Open booster';const s=currentSet();boxSummary.innerHTML=`${s.packsPerBox} packs · ${s.cardsPerPack} cards each${s.type==='highclass'?' · <span class="high-class-chip">High Class Pack</span>':' · simulated Japanese box'}`;boosterImg.src=s.booster||boosterFallback(s);updatePrimaryActionButton()}
+function resetStage(){cardShell.hidden=true;swipeCard.style.visibility='visible';swipeCard.style.transition='';swipeCard.style.transform='';swipeCard.style.opacity='1';cardStackLayer.innerHTML='';stackCount.textContent='';emptyState.hidden=true;emptyState.innerHTML='';pullName.textContent='';pullNo.textContent='';hitLine.textContent='';rarityTag.textContent='';rarityTag.className='rarity-tag';rarityTag.style.display='none';swipeCard.classList.remove('new-card');pullNext.disabled=true;skipPack.disabled=true;nextPack.hidden=true;cardShown=false;cardShell.dataset.renderKey='';boosterWrap.className='booster-wrap';openPack.disabled=box[selected]?.opened||false;packStatus.classList.remove('god-pack');packStatus.textContent=box[selected]?.opened?'That pack is already opened. Choose another below.':`Pack ${selected+1} selected.`;document.querySelector('.stage-top h2').textContent='Open booster';const s=currentSet();boxSummary.innerHTML=`${s.packsPerBox} packs · ${s.cardsPerPack} cards each${s.type==='highclass'?' · <span class="high-class-chip">High Class Pack</span>':' · simulated Japanese box'}`;boosterImg.src=s.booster||boosterFallback(s);updatePrimaryActionButton()}
 function updatePrimaryActionButton(){
  if(!openPack)return;
  if(!CURRENT_SERIES){
@@ -1099,7 +1099,7 @@ function updatePrimaryActionButton(){
  }
  if(currentPack){
    openPack.textContent='Next Card';
-   openPack.disabled=!!busy||!!autoRunning;
+   openPack.disabled=!!busy||!!autoRunning||!!cardTransitionLocked;
    return;
  }
  const raw=String(packOpenCount?.value||'PACK:1');
@@ -1110,7 +1110,7 @@ function updatePrimaryActionButton(){
    if(kind==='BOX')openPack.textContent=`Open ${count} Box${count===1?'':'es'}`;
    else openPack.textContent=count===1?'Open Pack':`Open ${count} Packs`;
  }
- openPack.disabled=!!busy||!box.length||!!box[selected]?.opened||box.every?.(p=>p.opened);
+ openPack.disabled=!!busy||!!cardTransitionLocked||!box.length||!!box[selected]?.opened||box.every?.(p=>p.opened);
 }
 function renderPacks(){packGrid.innerHTML=box.map((p,i)=>`<button class="pack-btn ${p.opened?'opened':''} ${i===selected?'selected':''}" data-i="${i}" ${p.opened?'disabled':''}>${i+1}</button>`).join('');packGrid.querySelectorAll('.pack-btn:not(:disabled)').forEach(b=>b.addEventListener('click',()=>{if(currentPack||autoRunning)return;selected=+b.dataset.i;renderPacks();resetStage()}))}
 function renderPackStats(){packsLeft.textContent=box.filter(p=>!p.opened).length;cardsPulled.textContent=sessionPulled;uniqueCards.textContent=uniqueCount(CURRENT_SERIES);bigHits.textContent=sessionBig}
@@ -1138,38 +1138,149 @@ function checkBinderCoinRewards(code){
 }
 
 function recordPull(c){if(!c)return;const wasNew=(state.collection[c.id]||0)===0;state.collection[c.id]=(state.collection[c.id]||0)+1;state.cardsPulled++;sessionPulled++;const ss=state.seriesStats[SETS[c.set].name];ss.cards++;ss.rarities[c.rarity]=(ss.rarities[c.rarity]||0)+1;ensureDaily();state.daily.cards++;state.daily.rarities[c.rarity]=(state.daily.rarities[c.rarity]||0)+1;if(BIG.has(c.rarity)){state.bigHits++;ss.bigHits++;sessionBig++;state.daily.bigHits++}state.recent=[c.id,...state.recent.filter(id=>id!==c.id)].slice(0,80);save();if(wasNew)grantXP(15,'New card');const total=ALL_CARDS[c.set]?.length||0;if(total&&uniqueCount(c.set)>=total&&!state.setCompletionXp[c.set]){state.setCompletionXp[c.set]=true;save();grantXP(2500,`${SETS[c.set].name} complete`)}checkBinderCoinRewards(c.set);renderPackStats();checkAchievements()}
-function showCurrentCard(){if(!currentPack||currentIndex<0||currentIndex>=currentPack.cards.length)return;const c=currentPack.cards[currentIndex],isNew=(state.collection[c.id]||0)===0;cardShell.hidden=false;swipeCard.style.visibility='visible';swipeCard.style.opacity='1';swipeCard.style.transform='';swipeCard.style.transition='';setImg(cardImg,c);rarityTag.textContent=isNew?'🆕 NEW':'';rarityTag.className=isNew?'rarity-tag new':'rarity-tag';rarityTag.style.display=isNew?'block':'none';swipeCard.classList.toggle('new-card',isNew);pullName.textContent=c.name;pullNo.textContent='';hitLine.textContent='';renderStack();pullNext.disabled=false;skipPack.disabled=getLevel()<5;cardShown=true;updatePrimaryActionButton();packStatus.textContent=currentPack.god?`GOD PACK · Card ${currentIndex+1} of ${currentPack.cards.length}`:currentPack.superPack?`★ ${currentSet().name} Super Pack ${currentPack.superIndex||1} of ${currentPack.superTotal||1} · Card ${currentIndex+1} of ${currentPack.cards.length}`:`Pack ${selected+1} · Card ${currentIndex+1} of ${currentPack.cards.length}`;SoundFX.reveal(c.rarity,isNew);recordPull(c)}
+function showCurrentCard(){
+ if(!currentPack||currentIndex<0||currentIndex>=currentPack.cards.length)return;
+ const c=currentPack.cards[currentIndex];
+ const renderKey=`${currentPack.superPack?'S':'P'}:${selected}:${currentIndex}:${c.id}`;
+ const isSameRender=cardShell.dataset.renderKey===renderKey&&cardShown;
+ const isNew=(state.collection[c.id]||0)===0;
+
+ cardShell.dataset.renderKey=renderKey;
+ cardShell.hidden=false;
+ swipeCard.style.visibility='visible';
+ swipeCard.style.opacity='1';
+ swipeCard.style.transform='translate3d(0,0,0) rotate(0deg)';
+ swipeCard.style.transition='none';
+
+ // Force the visible image to refresh for the new card before controls unlock.
+ cardImg.onerror=null;
+ cardImg.removeAttribute('src');
+ setImg(cardImg,c);
+
+ rarityTag.textContent=isNew?'🆕 NEW':'';
+ rarityTag.className=isNew?'rarity-tag new':'rarity-tag';
+ rarityTag.style.display=isNew?'block':'none';
+ swipeCard.classList.toggle('new-card',isNew);
+ pullName.textContent=c.name;
+ pullNo.textContent='';
+ hitLine.textContent='';
+ renderStack();
+
+ pullNext.disabled=false;
+ skipPack.disabled=getLevel()<5;
+ cardShown=true;
+
+ packStatus.textContent=currentPack.god
+   ?`GOD PACK · Card ${currentIndex+1} of ${currentPack.cards.length}`
+   :currentPack.superPack
+     ?`★ ${currentSet().name} Super Pack ${currentPack.superIndex||1} of ${currentPack.superTotal||1} · Card ${currentIndex+1} of ${currentPack.cards.length}`
+     :`Pack ${selected+1} · Card ${currentIndex+1} of ${currentPack.cards.length}`;
+
+ // Only award/reveal once for this card render.
+ if(!isSameRender){
+   SoundFX.reveal(c.rarity,isNew);
+   recordPull(c);
+ }
+ updatePrimaryActionButton();
+}
+
+let cardTransitionLocked=false;
 async function dismissCard(direction='left',duration=300){
- if(busy||!currentPack||currentIndex>=currentPack.cards.length)return;
- const dismissedId=currentPack.cards[currentIndex]?.id||null;
- SoundFX.swipe(direction);
- busy=true;pullNext.disabled=true;
- const startTransform=swipeCard.style.transform||'translate3d(0,0,0) rotate(0deg)';
- const ghost=swipeCard.cloneNode(true);
- ghost.removeAttribute('id');
- ghost.classList.remove('dragging');
- ghost.style.position='absolute';ghost.style.inset='0';ghost.style.zIndex='60';ghost.style.visibility='visible';ghost.style.opacity='1';ghost.style.pointerEvents='none';ghost.style.transition='none';ghost.style.transform=startTransform;
- cardShell.appendChild(ghost);
- swipeCard.style.visibility='hidden';
- swipeCard.style.transition='none';swipeCard.style.transform='translate3d(0,0,0) rotate(0deg)';swipeCard.style.opacity='1';
- const rect=cardShell.getBoundingClientRect();
- const travel=Math.max(rect.width*1.65,420);
- const tx=direction==='right'?travel:direction==='left'?-travel:0;
- const ty=direction==='up'?-Math.max(rect.height*1.25,520):18;
- const rot=direction==='left'?-16:direction==='right'?16:3;
+ if(cardTransitionLocked||busy||!currentPack||currentIndex<0||currentIndex>=currentPack.cards.length)return false;
+
+ const packRef=currentPack;
+ const startIndex=currentIndex;
+ const dismissedId=packRef.cards[startIndex]?.id||null;
+
+ cardTransitionLocked=true;
+ busy=true;
+ openPack.disabled=true;
+ pullNext.disabled=true;
+
  try{
-   const anim=ghost.animate([
-     {transform:startTransform,opacity:1},
-     {transform:`translate3d(${tx}px,${ty}px,0) rotate(${rot}deg)`,opacity:0}
-   ],{duration,easing:'cubic-bezier(.2,.72,.25,1)',fill:'forwards'});
-   await anim.finished.catch(()=>{});
- }catch(e){await wait(duration)}
- ghost.remove();
- currentIndex++;cardShown=false;if(autoPauseCardId&&dismissedId===autoPauseCardId)autoPauseCardId=null;
- if(currentIndex>=currentPack.cards.length){await finishOnePack();busy=false;return}
- showCurrentCard();
- requestAnimationFrame(()=>{swipeCard.style.visibility='visible'});
- busy=false;
+   SoundFX.swipe(direction);
+
+   const startTransform=swipeCard.style.transform||'translate3d(0,0,0) rotate(0deg)';
+   const ghost=swipeCard.cloneNode(true);
+   ghost.removeAttribute('id');
+   ghost.classList.remove('dragging');
+   ghost.style.position='absolute';
+   ghost.style.inset='0';
+   ghost.style.zIndex='60';
+   ghost.style.visibility='visible';
+   ghost.style.opacity='1';
+   ghost.style.pointerEvents='none';
+   ghost.style.transition='none';
+   ghost.style.transform=startTransform;
+   cardShell.appendChild(ghost);
+
+   // Keep the live card hidden while the ghost leaves the screen.
+   swipeCard.style.visibility='hidden';
+   swipeCard.style.transition='none';
+   swipeCard.style.transform='translate3d(0,0,0) rotate(0deg)';
+   swipeCard.style.opacity='1';
+
+   const rect=cardShell.getBoundingClientRect();
+   const travel=Math.max(rect.width*1.65,420);
+   const tx=direction==='right'?travel:direction==='left'?-travel:0;
+   const ty=direction==='up'?-Math.max(rect.height*1.25,520):18;
+   const rot=direction==='left'?-16:direction==='right'?16:3;
+
+   try{
+     const anim=ghost.animate(
+       [
+         {transform:startTransform,opacity:1},
+         {transform:`translate3d(${tx}px,${ty}px,0) rotate(${rot}deg)`,opacity:0}
+       ],
+       {duration,easing:'cubic-bezier(.2,.72,.25,1)',fill:'forwards'}
+     );
+     await anim.finished.catch(()=>{});
+   }catch(_){
+     await wait(duration);
+   }
+   ghost.remove();
+
+   // If another flow replaced the pack, do not mutate its index.
+   if(currentPack!==packRef)return false;
+
+   // Advance exactly one card from the index that began this transition.
+   currentIndex=startIndex+1;
+   cardShown=false;
+   cardShell.dataset.renderKey='';
+   if(autoPauseCardId&&dismissedId===autoPauseCardId)autoPauseCardId=null;
+
+   if(currentIndex>=packRef.cards.length){
+     // Unlock before finishOnePack so queued packs can initialise normally.
+     busy=false;
+     cardTransitionLocked=false;
+     await finishOnePack();
+     updatePrimaryActionButton();
+     return true;
+   }
+
+   // IMPORTANT: clear busy before rendering the next card.
+   // updatePrimaryActionButton() inside showCurrentCard can then enable Next Card.
+   busy=false;
+   cardTransitionLocked=false;
+
+   showCurrentCard();
+
+   // Let the new image/layout paint before accepting another tap.
+   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+   swipeCard.style.visibility='visible';
+   updatePrimaryActionButton();
+   return true;
+ }finally{
+   // Recovery path for interrupted animations/errors.
+   if(cardTransitionLocked){
+     cardTransitionLocked=false;
+     busy=false;
+     if(currentPack&&currentIndex>=0&&currentIndex<currentPack.cards.length){
+       swipeCard.style.visibility='visible';
+       updatePrimaryActionButton();
+     }
+   }
+ }
 }
 async function finishOnePack(){
  const wasSuper=!!currentPack?.superPack;
@@ -1628,10 +1739,16 @@ tutorialNext?.addEventListener('click',nextTutorial);
 tutorialBack?.addEventListener('click',previousTutorial);
 tutorialSkip?.addEventListener('click',finishTutorial);
 achievementExpand?.addEventListener('click',()=>{achievementsExpanded=!achievementsExpanded;renderAchievements()});
-document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));openPack.addEventListener('click',()=>{
- if(currentPack){if(!busy&&!autoRunning)dismissCard('left');return}
- if(tutorialActive&&currentTutorialStep().id==='open'){const count=$('packOpenCount');if(count)count.value='PACK:1'}
- ripPack()
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));openPack.addEventListener('click',async()=>{
+ if(currentPack){
+   if(!busy&&!autoRunning&&!cardTransitionLocked)await dismissCard('left');
+   return;
+ }
+ if(tutorialActive&&currentTutorialStep().id==='open'){
+   const count=$('packOpenCount');
+   if(count)count.value='PACK:1';
+ }
+ await ripPack();
 });
 packOpenCount.addEventListener('change',updatePrimaryActionButton);
 skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});[binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
