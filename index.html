@@ -200,7 +200,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  position:fixed;inset:0;z-index:2147483645;pointer-events:none;
 }
 .tutorial-overlay::before{
- content:"";position:absolute;inset:0;background:rgba(4,6,10,.66);
+ content:"";position:absolute;inset:0;background:rgba(4,6,10,.66);pointer-events:none;
  backdrop-filter:blur(1px);
 }
 .tutorial-card{
@@ -224,7 +224,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 .tutorial-actions .waiting{opacity:.45;pointer-events:none}
 .tutorial-skip{justify-self:center;border:0;background:transparent;color:var(--muted);font-size:11px;text-decoration:underline;padding:8px;cursor:pointer}
 .tutorial-highlight{
- position:relative!important;
+ position:relative!important;pointer-events:auto!important;
  z-index:2147483646!important;
  outline:3px solid var(--accent)!important;
  outline-offset:4px!important;
@@ -265,7 +265,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · TUTORIAL SCROLL FIX 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · TUTORIAL SCROLL FIX V2 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">120 cards</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="level-chip">Lv <span id="headerLevel">1</span> · 🪙 <span id="headerCoins">0</span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button></div>
@@ -1002,8 +1002,8 @@ function updateWelcome(){const l=getLevel();welcomeText.textContent=`${state.pro
 const TUTORIAL_STEPS=[
  {id:'welcome',view:'packsView',target:null,title:'Welcome, Trainer!',text:'Your goal is simple: open packs, collect cards, complete binders, earn PokéCoins, and level up your Trainer.',hint:null},
  {id:'series',view:'packsView',target:()=>seriesSelect,title:'Choose Your First Expansion',text:'Pick any expansion you want to start collecting. Each series has its own booster box and binder.',hint:'Choose a series to continue.',action:true},
- {id:'open',view:'packsView',target:()=>openPack,title:'Open Your First Pack',text:'For the tutorial we’ll open just one booster pack. Tap Open Pack and see what you pull.',hint:'Tap Open Pack.',action:true},
- {id:'swipe',view:'packsView',target:()=>cardShell,title:'Swipe Through Your Cards',text:'Swipe each face-up card left, right, or up. Every card you reveal is automatically added to your collection.',hint:'Swipe through the entire pack to continue.',action:true},
+ {id:'open',view:'packsView',target:()=>openPack,anchor:()=>openPack?.closest('.control-grid'),title:'Open Your First Pack',text:'For the tutorial we’ll open just one booster pack. Tap Open Pack and see what you pull.',hint:'Tap Open Pack.',action:true},
+ {id:'swipe',view:'packsView',target:()=>cardShell,anchor:()=>document.querySelector('.stage-arena'),title:'Swipe Through Your Cards',text:'Swipe each face-up card left, right, or up. Every card you reveal is automatically added to your collection.',hint:'Swipe through the entire pack to continue.',action:true},
  {id:'binder',view:'binderView',target:()=>document.querySelector('[data-view="binderView"]'),title:'Your Binder',text:'Everything you just pulled is saved here. New cards raise your set completion, and 25%, 50%, 75%, and 100% completion milestones award PokéCoins.',hint:null},
  {id:'quests',view:'questsView',target:()=>document.querySelector('[data-view="questsView"]'),title:'Earn Rewards',text:'Daily Quests and Achievements give you XP and PokéCoins as you play. You don’t need to memorize them now — just collect and they’ll progress naturally.',hint:null},
  {id:'progress',view:'profileView',target:()=>unlockList,title:'Level Up & Unlock More',text:'Early levels make opening faster: Levels 2–4 increase pack batches, Level 5 unlocks Auto Swipe, and Level 10 unlocks full boxes, the Store, Super Packs, and duplicate selling.',hint:null},
@@ -1029,53 +1029,67 @@ function positionTutorialCard(target){
  if((r.top+r.height/2) > vh*.52)card.classList.add('tutorial-top');
  else card.classList.add('tutorial-bottom');
 }
-function scrollTutorialTargetIntoView(target){
+function tutorialOffsetWithinScroller(el,scroller){
+ let y=0,node=el;
+ while(node&&node!==scroller){
+   y+=node.offsetTop||0;
+   node=node.offsetParent;
+ }
+ if(node===scroller)return y;
+ // Fallback for nested positioned elements.
+ const er=el.getBoundingClientRect(),sr=scroller.getBoundingClientRect();
+ return (er.top-sr.top)+scroller.scrollTop;
+}
+function scrollTutorialTargetIntoView(target,anchor=null){
  const scroller=document.getElementById('appScroller');
  if(!target||!scroller)return;
- const sr=scroller.getBoundingClientRect();
- const tr=target.getBoundingClientRect();
+
+ const focusEl=anchor||target;
  const card=tutorialCardEl();
- const reserve=card?Math.min(card.getBoundingClientRect().height+26,230):180;
+ const nav=document.querySelector('.nav');
+ const navH=nav?nav.getBoundingClientRect().height:68;
+ const cardH=card?Math.min(card.getBoundingClientRect().height,230):180;
+ const usableH=Math.max(220,scroller.clientHeight-navH);
 
- // Aim to place the highlighted target around the center of the available
- // space, leaving room for the tutorial card on the opposite side.
- const targetCenter=(tr.top-sr.top)+scroller.scrollTop+(tr.height/2);
- const visibleH=scroller.clientHeight;
- const desiredCenter=visibleH*.46;
- let nextTop=Math.max(0,targetCenter-desiredCenter);
+ // Calculate the actual position INSIDE appScroller instead of relying
+ // on viewport rects, which differ between desktop, Android Chrome and fullscreen.
+ const top=tutorialOffsetWithinScroller(focusEl,scroller);
+ const h=Math.max(focusEl.offsetHeight||0,target.offsetHeight||44);
+ const desiredViewportY=Math.max(cardH+24,Math.min(usableH*.58,usableH-cardH*.35));
+ let next=Math.round(top+(h/2)-desiredViewportY);
+ next=Math.max(0,Math.min(next,Math.max(0,scroller.scrollHeight-scroller.clientHeight)));
 
- // Clamp to actual scrollable range.
- nextTop=Math.min(nextTop,Math.max(0,scroller.scrollHeight-visibleH));
- scroller.scrollTop=nextTop;
- try{scroller.scrollTo({top:nextTop,left:0,behavior:'auto'})}catch(_){}
+ scroller.style.scrollBehavior='auto';
+ scroller.scrollTop=next;
+ try{scroller.scrollTo(0,next)}catch(_){}
 
- // If the target is still obscured by the tutorial card or nav, nudge it.
- requestAnimationFrame(()=>{
-   const rr=target.getBoundingClientRect();
-   const nav=document.querySelector('.nav');
-   const navTop=nav?nav.getBoundingClientRect().top:window.innerHeight;
-   const cardRect=card?card.getBoundingClientRect():null;
-   let delta=0;
+ // Repeat after layout/paint. Android Chrome can update element geometry
+ // a frame later when the tutorial overlay or controls change.
+ const settle=()=>{
+   const tr=target.getBoundingClientRect();
+   const cr=scroller.getBoundingClientRect();
+   const nr=nav?nav.getBoundingClientRect():{top:window.innerHeight};
+   const safeTop=Math.max(cr.top+12,card?.classList.contains('tutorial-top')?(card.getBoundingClientRect().bottom+16):cr.top+12);
+   const safeBottom=Math.min(nr.top-16,card?.classList.contains('tutorial-bottom')?(card.getBoundingClientRect().top-16):nr.top-16);
 
-   if(cardRect){
-     const overlaps=!(rr.bottom<cardRect.top || rr.top>cardRect.bottom);
-     if(overlaps){
-       if(cardRect.top < window.innerHeight/2) delta=rr.top-cardRect.bottom-18;
-       else delta=rr.bottom-cardRect.top+18;
-     }
-   }
+   let correction=0;
+   if(tr.top<safeTop) correction=tr.top-safeTop;
+   else if(tr.bottom>safeBottom) correction=tr.bottom-safeBottom;
 
-   if(rr.bottom>navTop-10) delta=Math.max(delta,rr.bottom-(navTop-16));
-   if(rr.top<12) delta=Math.min(delta,rr.top-18);
-
-   if(Math.abs(delta)>2){
-     scroller.scrollTop=Math.max(0,Math.min(
-       scroller.scrollTop+delta,
+   if(Math.abs(correction)>2){
+     const corrected=Math.max(0,Math.min(
+       scroller.scrollTop+correction,
        Math.max(0,scroller.scrollHeight-scroller.clientHeight)
      ));
+     scroller.scrollTop=corrected;
+     try{scroller.scrollTo(0,corrected)}catch(_){}
    }
- });
+ };
+ requestAnimationFrame(()=>requestAnimationFrame(settle));
+ setTimeout(settle,180);
+ setTimeout(settle,360);
 }
+
 function setTutorialActionState(step){
  const waiting=!!step.action;
  tutorialNext.hidden=waiting;
@@ -1111,17 +1125,24 @@ function renderTutorialStep(){
  const focus=()=>{
    const target=tutorialTargetFor(step);
    if(!target){positionTutorialCard(null);return}
+   const anchor=typeof step.anchor==='function'?step.anchor():null;
    tutorialTarget=target;
    target.classList.add('tutorial-highlight');
-   scrollTutorialTargetIntoView(target);
+
+   // First move content, then decide where the tutorial card belongs,
+   // then move content again using the final card position.
+   scrollTutorialTargetIntoView(target,anchor);
    requestAnimationFrame(()=>{
      positionTutorialCard(target);
-     scrollTutorialTargetIntoView(target);
+     scrollTutorialTargetIntoView(target,anchor);
    });
+   setTimeout(()=>{
+     positionTutorialCard(target);
+     scrollTutorialTargetIntoView(target,anchor);
+   },220);
  };
- // switchView intentionally resets tab scroll after render. Run tutorial
- // scrolling after those resets so the highlighted control remains visible.
- requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(focus,120)));
+ // Run after switchView's own reset, with additional retries for mobile/fullscreen.
+ setTimeout(focus,140);
 }
 function goToTutorialStep(id){
  const idx=TUTORIAL_STEPS.findIndex(s=>s.id===id);
