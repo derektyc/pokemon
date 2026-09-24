@@ -336,7 +336,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
   <button class="secondary" id="driveLoad" type="button" disabled>Load from Drive</button>
   <button class="secondary" id="driveDisconnect" type="button" disabled>Disconnect</button>
  </div>
- <div class="cloud-help">Creates a private <strong>Pokemon Pack Simulator</strong> folder in My Drive and stores <strong>pokemon-pack-simulator-save.json</strong> inside it. Local save remains available for offline play. Once connected on this device, the simulator will try to reconnect silently on future visits.</div>
+ <div class="cloud-help">Creates a private <strong>Pokemon Pack Simulator</strong> folder in My Drive and stores <strong>pokemon-pack-simulator-save.json</strong> inside it. Local save remains available for offline play. Once connected on this device, the simulator will try to reconnect silently on future visits. If a Drive save exists, it is loaded automatically and becomes the active game save.</div>
 </div>
    </div>
 
@@ -783,21 +783,25 @@ function scheduleDriveAutosave(){
  driveAutosaveTimer=setTimeout(()=>uploadStateToDrive(false),3000);
 }
 async function prepareDriveAfterAuth({firstConnect=false}={}){
- driveReady=true;localStorage.setItem(DRIVE_CONNECTED_KEY,'1');setDriveStatus('☁ Connected · checking save…','sync');
+ driveReady=true;
+ localStorage.setItem(DRIVE_CONNECTED_KEY,'1');
+ setDriveStatus('☁ Connected · checking cloud save…','sync');
+
  const remote=await ensureDriveSaveFile(false);
- if(!remote){await uploadStateToDrive(false);driveInitialSyncDone=true;return}
- const lastSync=Number(localStorage.getItem(DRIVE_LAST_SYNC_KEY)||0);
- const localUpdated=Number(localStorage.getItem(DRIVE_LOCAL_UPDATED_KEY)||0);
- const remoteUpdated=Date.parse(remote.modifiedTime||'')||0;
- if(firstConnect&&lastSync===0){
-   // Never overwrite an existing cloud save automatically on first connection.
-   driveInitialSyncDone=true;setDriveStatus('☁ Cloud save found · choose Load or Save','sync');return;
+
+ // Google Drive is the preferred source whenever a cloud save already exists.
+ // This keeps all devices loading the same cloud progress automatically.
+ if(remote){
+   const loaded=await downloadStateFromDrive(false);
+   driveInitialSyncDone=loaded===true;
+   if(loaded===true)setDriveStatus('☁ Cloud save loaded · Synced','ok');
+   return;
  }
- if(remoteUpdated>lastSync+2000&&localUpdated<=lastSync+2000){await downloadStateFromDrive(false)}
- else if(localUpdated>lastSync+2000&&remoteUpdated<=lastSync+2000){await uploadStateToDrive(false)}
- else if(remoteUpdated>lastSync+2000&&localUpdated>lastSync+2000){setDriveStatus('☁ Sync conflict · choose Load or Save','warn')}
- else setDriveStatus('☁ Synced','ok');
- driveInitialSyncDone=true;
+
+ // No cloud save exists yet: seed Drive with the current local save.
+ const uploaded=await uploadStateToDrive(false);
+ driveInitialSyncDone=!!uploaded;
+ if(uploaded)setDriveStatus('☁ Cloud save created · Synced','ok');
 }
 async function connectGoogleDrive(interactive=true){
  if(driveSyncBusy)return;
@@ -1648,8 +1652,10 @@ document.addEventListener('pointerdown',e=>{if(!SoundFX.enabled)return;const b=e
 fullscreenBtn.addEventListener('click',()=>toggleFullscreen(false));document.addEventListener('fullscreenchange',syncFullscreenState);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&isFullscreenMode())requestWakeLock();else if(document.visibilityState!=='visible')releaseWakeLock()});enterSimulatorBtn.addEventListener('click',()=>{SoundFX.init();entryOverlay.style.display='none';switchView('packsView')});
 
 const progressionMigrated=migrateProgressionToV3();if(progressionMigrated)save();ensureDaily();claimDailyLogin();neutralSeriesState();renderProfile();updateWelcome();applyFeatureLocks();checkAchievements();switchView('packsView');
-if(!state.tutorialCompleted&&!hadExistingSave)setTimeout(()=>startTutorial(false),180);
-setTimeout(autoReconnectGoogleDrive,650);
+setTimeout(autoReconnectGoogleDrive,120);
+if(!state.tutorialCompleted&&!hadExistingSave)setTimeout(()=>{
+ if(!driveSyncBusy&&!driveReady)startTutorial(false);
+},1100);
 
 
 document.addEventListener('pointerdown',()=>{try{SoundFX.init()}catch(_){}},{once:true});
