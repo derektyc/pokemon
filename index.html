@@ -100,26 +100,27 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 .achievement-grid.compact-scroll::-webkit-scrollbar{width:8px}.achievement-grid.compact-scroll::-webkit-scrollbar-thumb{background:#3c4455;border-radius:999px}
 .master-collector .level-chip{border-color:rgba(255,213,74,.72);box-shadow:0 0 0 1px rgba(255,213,74,.15) inset}
 .master-collector .title:after{content:"  👑";font-size:.55em;vertical-align:middle}
-.super-pack-card{position:relative;overflow:hidden}.super-pack-card:before{content:"SUPER";position:absolute;right:7px;top:7px;background:rgba(255,213,74,.94);color:#151515;border-radius:999px;padding:4px 7px;font-size:9px;font-weight:950;z-index:2}
+.super-pack-card{position:relative;overflow:hidden!important;min-width:0!important;max-width:100%!important}.super-pack-card:before{content:"SUPER";position:absolute;right:7px;top:7px;background:rgba(255,213,74,.94);color:#151515;border-radius:999px;padding:4px 7px;font-size:9px;font-weight:950;z-index:2}
 .super-pack-card img{filter:drop-shadow(0 8px 14px rgba(0,0,0,.35))}
 .login-reward{border-color:rgba(255,213,74,.62)!important}
 
 
-.super-pack-buyrow{display:grid;grid-template-columns:110px minmax(0,1fr);gap:7px;margin-top:9px;align-items:stretch}.super-pack-qtywrap{display:flex;flex-direction:column;gap:4px}.super-pack-qtylabel{font-size:9px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.05em}
-.super-pack-buyrow select{width:100%;background:#0f1219;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:9px 8px;font-weight:800}
-.super-pack-buyrow button{margin-top:0!important}
+.super-pack-buyrow{display:flex!important;flex-direction:column!important;gap:7px!important;margin-top:9px!important;align-items:stretch!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden!important}.super-pack-qtywrap{display:flex;flex-direction:column;gap:4px}.super-pack-qtylabel{font-size:9px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.super-pack-buyrow select{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;background:#0f1219;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:9px 8px;font-weight:800}
+.super-pack-buyrow button{display:block!important;position:static!important;float:none!important;transform:none!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;margin:0!important;white-space:normal!important;overflow-wrap:anywhere!important}
 
 #purchaseDialog{width:min(430px,92vw);z-index:2147483647}
 #purchaseDialog .modal-actions{justify-content:flex-end}
 
-@media(max-width:600px){
- #superPackGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .super-pack-buyrow{grid-template-columns:1fr!important;gap:7px}
- .super-pack-qtywrap{width:100%}
- .super-pack-buyrow select,.super-pack-buyrow button{width:100%!important;min-width:0!important;max-width:100%!important}
- .super-pack-buyrow button{white-space:normal;line-height:1.15;padding:10px 6px}
+@media(max-width:700px){
+ #superPackGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ #superPackGrid .store-card{padding:8px!important;min-width:0!important;overflow:hidden!important}
+ .super-pack-qtywrap{width:100%!important;min-width:0!important}
+ .super-pack-buyrow button{line-height:1.2!important;padding:10px 6px!important;font-size:12px!important}
 }
-@media(max-width:340px){#superPackGrid{grid-template-columns:1fr}}
+@media(max-width:360px){
+ #superPackGrid{grid-template-columns:1fr!important}
+}
 
 </style>
 </head>
@@ -223,7 +224,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
   </section>
  </main>
 
- <div class="footer-note" id="footerNote">Multi-series simulator: Ninja Spinner (M4), Abyss Eye (M5), and Storm Emeralda (M6). Each Japanese box is simulated as 30 packs with 5 cards per pack. Cards are unique within each pack, and RR/AR/SR/SAR/MUR hits are placed as the final card. Simulated collation is not an official Pokémon Company guarantee.</div>
+ <div class="footer-note" id="footerNote">Build: Mobile Store Fix 2026-09-24 · Multi-series simulator: Ninja Spinner (M4), Abyss Eye (M5), and Storm Emeralda (M6). Each Japanese box is simulated as 30 packs with 5 cards per pack. Cards are unique within each pack, and RR/AR/SR/SAR/MUR hits are placed as the final card. Simulated collation is not an official Pokémon Company guarantee.</div>
 </div></div>
 <nav class="nav" aria-label="Main sections"><button class="active" data-view="packsView">🎴<br>Packs</button><button data-view="binderView">📘<br>Binder</button><button data-view="questsView">🎯<br>Quests</button><button data-view="profileView">👤<br>Profile</button><button data-view="storeView">🛒<br>Store</button></nav>
   <div id="achievementToast" class="achievement-toast" role="status" aria-live="polite"></div><div id="levelToast" class="level-toast" role="status" aria-live="polite"></div>
