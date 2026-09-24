@@ -204,7 +204,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  backdrop-filter:blur(1px);
 }
 .tutorial-card{
- position:absolute;left:50%;bottom:calc(78px + env(safe-area-inset-bottom));
+ position:absolute;left:50%;bottom:calc(78px + env(safe-area-inset-bottom));top:auto;
  transform:translateX(-50%);
  width:min(520px,calc(100vw - 24px));
  background:rgba(18,21,29,.985);
@@ -213,11 +213,15 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  box-shadow:0 22px 70px rgba(0,0,0,.62);
  pointer-events:auto;z-index:2;
 }
+.tutorial-card.tutorial-top{top:calc(14px + env(safe-area-inset-top));bottom:auto}
+.tutorial-card.tutorial-bottom{top:auto;bottom:calc(78px + env(safe-area-inset-bottom))}
 .tutorial-step{font-size:10px;color:var(--accent);font-weight:950;text-transform:uppercase;letter-spacing:.09em}
 .tutorial-title{font-size:21px;font-weight:950;margin-top:5px}
 .tutorial-text{font-size:13px;color:var(--muted);line-height:1.55;margin-top:7px}
 .tutorial-actions{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:14px}
 .tutorial-actions .secondary,.tutorial-actions .primary{min-height:40px;padding:9px 12px}
+.tutorial-action-hint{margin-top:9px;padding:8px 10px;border-radius:10px;background:rgba(255,213,74,.08);border:1px solid rgba(255,213,74,.2);font-size:11px;font-weight:850;color:#ffe889}
+.tutorial-actions .waiting{opacity:.45;pointer-events:none}
 .tutorial-skip{justify-self:center;border:0;background:transparent;color:var(--muted);font-size:11px;text-decoration:underline;padding:8px;cursor:pointer}
 .tutorial-highlight{
  position:relative!important;
@@ -244,7 +248,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · MOBILE + TUTORIAL 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · INTERACTIVE FIRST-PACK TUTORIAL 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">120 cards</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="level-chip">Lv <span id="headerLevel">1</span> · 🪙 <span id="headerCoins">0</span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button></div>
@@ -344,7 +348,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="tutorial-card">
   <div id="tutorialStep" class="tutorial-step">Step 1 of 8</div>
   <div id="tutorialTitle" class="tutorial-title">Welcome!</div>
-  <div id="tutorialText" class="tutorial-text"></div>
+  <div id="tutorialText" class="tutorial-text"></div><div id="tutorialHint" class="tutorial-action-hint" hidden></div>
   <div class="tutorial-actions">
    <button id="tutorialBack" class="secondary" type="button">Back</button>
    <button id="tutorialSkip" class="tutorial-skip" type="button">Skip Tutorial</button>
@@ -369,8 +373,8 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 <dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
-const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext'].forEach(id=>E[id]=$(id));
-const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext}=E;
+const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint'].forEach(id=>E[id]=$(id));
+const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint}=E;
 // --- Built-in sound engine (Web Audio API; no external audio files required) ---
 const SoundFX=(()=>{
  let ctx=null,master=null;
@@ -691,7 +695,7 @@ function prepareGeneratedBox(preserveSession=false){autoPauseCardId=null;const s
 
 function buildQueue(){const req=parseOpenSelection();batchUnlimited=req.kind==='UNLIMITED';batchRemainingTotal=req.totalPacks;if(Number.isFinite(req.totalPacks))state.achievementStats.maxBatch=Math.max(state.achievementStats.maxBatch||0,req.totalPacks);refillQueueFromCurrentBox();newBox.textContent=batchUnlimited?'Stop Unlimited':'New Box';return openQueue}
 async function ripPack(){if(busy||currentPack||autoRunning)return;if(box.every(p=>p.opened)){openPack.disabled=true;return}openQueue=buildQueue();queueIndex=0;if(!openQueue.length)return;await openQueuedPack()}
-async function openQueuedPack(){if(queueIndex>=openQueue.length){if(batchRemainingTotal>0){prepareGeneratedBox(batchUnlimited);refillQueueFromCurrentBox();if(!openQueue.length){finishBatch();return}}else{finishBatch();return}}selected=openQueue[queueIndex];const p=box[selected];if(!p||p.opened){queueIndex++;return openQueuedPack()}busy=true;openPack.disabled=true;batchRemainingTotal=Math.max(0,batchRemainingTotal-1);recordPackOpened(p);renderPacks();boosterWrap.classList.add('shake');await wait(380);boosterWrap.classList.add('tearing');await wait(300);boosterWrap.classList.add('opened');await wait(260);boosterWrap.classList.add('hidden');currentPack=p;currentIndex=0;busy=false;if(p.god){SoundFX.god();state.achievementStats.godPacks=(state.achievementStats.godPacks||0)+1;grantXP(1000,'God Pack');packStatus.classList.add('god-pack');packStatus.textContent='✦ GOD PACK! ✦';save();checkAchievements()}else{packStatus.classList.remove('god-pack');packStatus.textContent=`Pack ${selected+1} · Card 1 of ${currentSet().cardsPerPack}`;}showCurrentCard()}
+async function openQueuedPack(){if(queueIndex>=openQueue.length){if(batchRemainingTotal>0){prepareGeneratedBox(batchUnlimited);refillQueueFromCurrentBox();if(!openQueue.length){finishBatch();return}}else{finishBatch();return}}selected=openQueue[queueIndex];const p=box[selected];if(!p||p.opened){queueIndex++;return openQueuedPack()}busy=true;openPack.disabled=true;batchRemainingTotal=Math.max(0,batchRemainingTotal-1);recordPackOpened(p);renderPacks();boosterWrap.classList.add('shake');await wait(380);boosterWrap.classList.add('tearing');await wait(300);boosterWrap.classList.add('opened');await wait(260);boosterWrap.classList.add('hidden');currentPack=p;currentIndex=0;busy=false;if(p.god){SoundFX.god();state.achievementStats.godPacks=(state.achievementStats.godPacks||0)+1;grantXP(1000,'God Pack');packStatus.classList.add('god-pack');packStatus.textContent='✦ GOD PACK! ✦';save();checkAchievements()}else{packStatus.classList.remove('god-pack');packStatus.textContent=`Pack ${selected+1} · Card 1 of ${currentSet().cardsPerPack}`;}showCurrentCard();tutorialPackOpened()}
 function renderStack(){cardStackLayer.innerHTML='';if(!currentPack)return;const remain=currentPack.cards.length-currentIndex;for(let i=Math.min(remain-1,4);i>=1;i--){const c=currentPack.cards[currentIndex+i],d=document.createElement('div');d.className='stack-card';d.style.transform=`translate(${i*3}px,${i*5}px) scale(${1-i*.012})`;const im=document.createElement('img');im.alt='';setImg(im,c);d.appendChild(im);cardStackLayer.appendChild(d)}stackCount.textContent=remain>1?`${remain} cards`:''}
 
 function checkBinderCoinRewards(code){
@@ -743,6 +747,7 @@ async function dismissCard(direction='left',duration=300){
 async function finishOnePack(){
  const wasSuper=!!currentPack?.superPack;
  cardShell.hidden=true;cardStackLayer.innerHTML='';stackCount.textContent='';pullName.textContent='';currentPack=null;currentIndex=-1;
+ if(!wasSuper)tutorialFirstPackFinished();
  if(wasSuper){
    if(superPackQueue.length){packStatus.textContent='Super Pack complete · preparing next Super Pack';await wait(autoRunning?350:150);openNextPurchasedSuperPack();return}
    resetStage();packStatus.textContent='Super Packs complete · Ready for a normal pack.';openPack.disabled=false;renderStore();checkAchievements();return
@@ -978,67 +983,127 @@ function renderProfile(){profileName.value=state.profileName||'Trainer';renderLe
 function updateWelcome(){const l=getLevel();welcomeText.textContent=`${state.profileName||'Trainer'} · ${uniqueCount()} unique`;if(headerLevel)headerLevel.textContent=l;if(headerCoins)headerCoins.textContent=state.pokecoins||0}
 
 const TUTORIAL_STEPS=[
- {view:'packsView',target:null,title:'Welcome, Trainer!',text:'Open booster packs, build your binder, earn XP and PokéCoins, complete quests, and unlock more powerful opening tools as you level up.'},
- {view:'packsView',target:()=>seriesSelect,title:'Choose an Expansion',text:'Start by choosing a series. Every expansion has its own booster box and binder. No series is selected automatically.'},
- {view:'packsView',target:()=>openPack,title:'Open Your Packs',text:'Use the pack selector and Open Pack button here. Higher trainer levels unlock larger batch openings, full boxes, and eventually unlimited boxes.'},
- {view:'packsView',target:()=>document.querySelector('.stage-arena'),title:'Swipe Through Cards',text:'After opening a pack, swipe the face-up card left, right, or up to reveal the next one. New binder cards and rare hits have their own sound effects.'},
- {view:'binderView',target:()=>document.querySelector('[data-view="binderView"]'),title:'Complete Your Binder',text:'The Binder tracks owned and missing cards for the selected series. Reaching 25%, 50%, 75%, and 100% completion awards PokéCoins.'},
- {view:'questsView',target:()=>document.querySelector('[data-view="questsView"]'),title:'Quests & Achievements',text:'Daily Quests and permanent Achievements award XP and PokéCoins. Achievements can be expanded when you want to browse the full list.'},
- {view:'storeView',target:()=>document.querySelector('[data-view="storeView"]'),title:'The Store',text:'The Store unlocks at Level 10. Spend PokéCoins on Japanese MP promo cards or 4,000-PokéCoin Super Packs containing premium rarity cards.'},
- {view:'profileView',target:()=>unlockList,title:'Level Up',text:'Your milestone track unlocks Auto Swipe at Level 5, Store and full-box features at Level 10, larger box batches later, and Master Collector + unlimited boxes at Level 200.'}
+ {id:'welcome',view:'packsView',target:null,title:'Welcome, Trainer!',text:'Your goal is simple: open packs, collect cards, complete binders, earn PokéCoins, and level up your Trainer.',hint:null},
+ {id:'series',view:'packsView',target:()=>seriesSelect,title:'Choose Your First Expansion',text:'Pick any expansion you want to start collecting. Each series has its own booster box and binder.',hint:'Choose a series to continue.',action:true},
+ {id:'open',view:'packsView',target:()=>openPack,title:'Open Your First Pack',text:'For the tutorial we’ll open just one booster pack. Tap Open Pack and see what you pull.',hint:'Tap Open Pack.',action:true},
+ {id:'swipe',view:'packsView',target:()=>cardShell,title:'Swipe Through Your Cards',text:'Swipe each face-up card left, right, or up. Every card you reveal is automatically added to your collection.',hint:'Swipe through the entire pack to continue.',action:true},
+ {id:'binder',view:'binderView',target:()=>document.querySelector('[data-view="binderView"]'),title:'Your Binder',text:'Everything you just pulled is saved here. New cards raise your set completion, and 25%, 50%, 75%, and 100% completion milestones award PokéCoins.',hint:null},
+ {id:'quests',view:'questsView',target:()=>document.querySelector('[data-view="questsView"]'),title:'Earn Rewards',text:'Daily Quests and Achievements give you XP and PokéCoins as you play. You don’t need to memorize them now — just collect and they’ll progress naturally.',hint:null},
+ {id:'progress',view:'profileView',target:()=>unlockList,title:'Level Up & Unlock More',text:'Early levels make opening faster: Levels 2–4 increase pack batches, Level 5 unlocks Auto Swipe, and Level 10 unlocks full boxes, the Store, Super Packs, and duplicate selling.',hint:null},
+ {id:'finish',view:'packsView',target:null,title:'You’re Ready!',text:'Complete your binder, earn PokéCoins, level up, and hunt for the rarest cards. Everything else will unlock naturally as you play.',hint:null}
 ];
-let tutorialIndex=0,tutorialActive=false,tutorialTarget=null;
+let tutorialIndex=0,tutorialActive=false,tutorialTarget=null,tutorialReplay=false;
+const tutorialCardEl=()=>tutorialOverlay?.querySelector('.tutorial-card');
 
+function currentTutorialStep(){return TUTORIAL_STEPS[tutorialIndex]||TUTORIAL_STEPS[0]}
 function clearTutorialHighlight(){
  if(tutorialTarget){tutorialTarget.classList.remove('tutorial-highlight');tutorialTarget=null}
 }
 function tutorialTargetFor(step){
  try{return typeof step.target==='function'?step.target():null}catch(_){return null}
 }
+function positionTutorialCard(target){
+ const card=tutorialCardEl();if(!card)return;
+ card.classList.remove('tutorial-top','tutorial-bottom');
+ if(!target){card.classList.add('tutorial-bottom');return}
+ const r=target.getBoundingClientRect();
+ // Put instructions opposite the highlighted control/card.
+ if((r.top+r.height/2) > window.innerHeight*.52)card.classList.add('tutorial-top');
+ else card.classList.add('tutorial-bottom');
+}
+function setTutorialActionState(step){
+ const waiting=!!step.action;
+ tutorialNext.hidden=waiting;
+ tutorialHint.hidden=!step.hint;
+ tutorialHint.textContent=step.hint||'';
+ tutorialBack.disabled=tutorialIndex===0 || ['open','swipe'].includes(step.id);
+ tutorialNext.textContent=step.id==='finish'?'Start Collecting':'Next';
+}
 function renderTutorialStep(){
  if(!tutorialActive)return;
  clearTutorialHighlight();
- const step=TUTORIAL_STEPS[tutorialIndex];
+ const step=currentTutorialStep();
  if(step.view)switchView(step.view);
+
+ // Tutorial must use one normal pack only.
+ if(step.id==='open'){
+   const count=$('packOpenCount');
+   if(count){
+     const one=[...count.options].find(o=>o.value==='1');
+     if(one)count.value='1';
+     count.disabled=true;
+   }
+ } else {
+   const count=$('packOpenCount');
+   if(count && step.id!=='swipe')refreshPackControls();
+ }
+
  tutorialStep.textContent=`Step ${tutorialIndex+1} of ${TUTORIAL_STEPS.length}`;
  tutorialTitle.textContent=step.title;
  tutorialText.textContent=step.text;
- tutorialBack.disabled=tutorialIndex===0;
- tutorialNext.textContent=tutorialIndex===TUTORIAL_STEPS.length-1?'Start Collecting':'Next';
+ setTutorialActionState(step);
 
  const focus=()=>{
    const target=tutorialTargetFor(step);
-   if(!target)return;
+   if(!target){positionTutorialCard(null);return}
    tutorialTarget=target;
    target.classList.add('tutorial-highlight');
    try{target.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'})}catch(_){}
+   requestAnimationFrame(()=>positionTutorialCard(target));
  };
  requestAnimationFrame(()=>requestAnimationFrame(focus));
 }
+function goToTutorialStep(id){
+ const idx=TUTORIAL_STEPS.findIndex(s=>s.id===id);
+ if(idx<0)return;
+ tutorialIndex=idx;renderTutorialStep();
+}
 function startTutorial(replay=false){
+ // Do not destroy a pack already in progress just to replay the help.
+ if(replay && currentPack){
+   showLevelToast('Finish your current pack before replaying the tutorial.');
+   return;
+ }
+ tutorialReplay=!!replay;
  tutorialActive=true;
  tutorialIndex=0;
  tutorialOverlay.hidden=false;
- // Replay does not alter completion state unless the user actually finishes/skips.
  renderTutorialStep();
 }
 function finishTutorial(){
  clearTutorialHighlight();
  tutorialActive=false;
  tutorialOverlay.hidden=true;
+ tutorialReplay=false;
+ const count=$('packOpenCount');if(count)refreshPackControls();
  state.tutorialCompleted=true;
  save();
  switchView('packsView');
 }
 function nextTutorial(){
+ const step=currentTutorialStep();
+ if(step.action)return;
  if(tutorialIndex>=TUTORIAL_STEPS.length-1){finishTutorial();return}
  tutorialIndex++;
  renderTutorialStep();
 }
 function previousTutorial(){
- if(tutorialIndex<=0)return;
+ const step=currentTutorialStep();
+ if(['open','swipe'].includes(step.id)||tutorialIndex<=0)return;
  tutorialIndex--;
  renderTutorialStep();
+}
+function tutorialSeriesChosen(){
+ if(!tutorialActive||currentTutorialStep().id!=='series'||!CURRENT_SERIES)return;
+ setTimeout(()=>goToTutorialStep('open'),120);
+}
+function tutorialPackOpened(){
+ if(!tutorialActive||currentTutorialStep().id!=='open')return;
+ setTimeout(()=>goToTutorialStep('swipe'),80);
+}
+function tutorialFirstPackFinished(){
+ if(!tutorialActive||currentTutorialStep().id!=='swipe')return;
+ setTimeout(()=>goToTutorialStep('binder'),180);
 }
 
 function switchView(id){
@@ -1062,7 +1127,8 @@ tutorialNext?.addEventListener('click',nextTutorial);
 tutorialBack?.addEventListener('click',previousTutorial);
 tutorialSkip?.addEventListener('click',finishTutorial);
 achievementExpand?.addEventListener('click',()=>{achievementsExpanded=!achievementsExpanded;renderAchievements()});
-document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));openPack.addEventListener('click',ripPack);pullNext.addEventListener('click',()=>dismissCard('left'));skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true)});[binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));openPack.addEventListener('click',()=>{if(tutorialActive&&currentTutorialStep().id==='open'){const count=$('packOpenCount');if(count)count.value='1'}},true);
+openPack.addEventListener('click',ripPack);pullNext.addEventListener('click',()=>dismissCard('left'));skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});[binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
 saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});exportSave.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pokemon-pack-simulator-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)});importSave.addEventListener('change',async()=>{const f=importSave.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.collection)throw new Error();state={...state,...x};for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}if(state.xp==null)state.xp=0;if(state.pokecoins==null)state.pokecoins=0;if(!state.promos)state.promos={};if(!state.setCompletionXp)state.setCompletionXp={};if(!state.binderCoinRewards)state.binderCoinRewards={};if(!state.dailyLogin)state.dailyLogin={lastDate:'',day:0};if(typeof state.tutorialCompleted!=='boolean')state.tutorialCompleted=true;state.xpVersion=1;save();refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();alert('Save imported.')}catch(e){alert('That save file could not be read.')}importSave.value=''});resetSave.addEventListener('click',()=>{if(!confirm('Reset the entire binder, stats, daily quests and achievements across all series?'))return;state={profileName:state.profileName||'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:Object.fromEntries(SERIES_ORDER.map(c=>[SETS[c].name,{boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}])),daily:{date:localDayKey(),packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,xpVersion:1};save();neutralSeriesState();renderBinder();renderProfile();updateWelcome()});
 
 const appShell=$('appShell');let pseudoFullscreen=false,wakeLock=null;const isFullscreenMode=()=>!!document.fullscreenElement||pseudoFullscreen;async function requestWakeLock(){try{if('wakeLock' in navigator&&isFullscreenMode()){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener?.('release',()=>{wakeLock=null})}}catch(e){}}
