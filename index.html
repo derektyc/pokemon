@@ -108,6 +108,9 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 .super-pack-buyrow{display:grid;grid-template-columns:110px minmax(0,1fr);gap:7px;margin-top:9px;align-items:stretch}.super-pack-qtywrap{display:flex;flex-direction:column;gap:4px}.super-pack-qtylabel{font-size:9px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.05em}
 .super-pack-buyrow select{width:100%;background:#0f1219;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:9px 8px;font-weight:800}
 .super-pack-buyrow button{margin-top:0!important}
+
+#purchaseDialog{width:min(430px,92vw);z-index:2147483647}
+#purchaseDialog .modal-actions{justify-content:flex-end}
 </style>
 </head>
 
@@ -213,11 +216,23 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="footer-note" id="footerNote">Multi-series simulator: Ninja Spinner (M4), Abyss Eye (M5), and Storm Emeralda (M6). Each Japanese box is simulated as 30 packs with 5 cards per pack. Cards are unique within each pack, and RR/AR/SR/SAR/MUR hits are placed as the final card. Simulated collation is not an official Pokémon Company guarantee.</div>
 </div></div>
 <nav class="nav" aria-label="Main sections"><button class="active" data-view="packsView">🎴<br>Packs</button><button data-view="binderView">📘<br>Binder</button><button data-view="questsView">🎯<br>Quests</button><button data-view="profileView">👤<br>Profile</button><button data-view="storeView">🛒<br>Store</button></nav>
-  <div id="achievementToast" class="achievement-toast" role="status" aria-live="polite"></div><div id="levelToast" class="level-toast" role="status" aria-live="polite"></div><dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
+  <div id="achievementToast" class="achievement-toast" role="status" aria-live="polite"></div><div id="levelToast" class="level-toast" role="status" aria-live="polite"></div>
+<dialog id="purchaseDialog">
+  <div class="modal-inner">
+    <h3 id="purchaseDialogTitle" style="margin:0 0 8px">Confirm Purchase</h3>
+    <div id="purchaseDialogText" class="modal-meta"></div>
+    <div class="modal-actions">
+      <button class="primary" id="purchaseConfirmBtn" type="button">Confirm</button>
+      <button class="secondary" id="purchaseCancelBtn" type="button">Cancel</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
-const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid'].forEach(id=>E[id]=$(id));
-const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid}=E;
+const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn'].forEach(id=>E[id]=$(id));
+const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn}=E;
 // --- Built-in sound engine (Web Audio API; no external audio files required) ---
 const SoundFX=(()=>{
  let ctx=null,master=null;
@@ -669,6 +684,54 @@ function renderAchievements(){
 
 
 const SUPER_PACK_PRICE=4000;
+
+let pendingPurchaseAction=null;
+let purchaseFullscreenState={native:false,pseudo:false};
+function requestPurchaseConfirmation(title,text,action){
+ pendingPurchaseAction=action;
+ purchaseFullscreenState={
+   native:!!document.fullscreenElement,
+   pseudo:!!appShell?.classList.contains('pseudo-fullscreen')
+ };
+ purchaseDialogTitle.textContent=title||'Confirm Purchase';
+ purchaseDialogText.textContent=text||'';
+ purchaseDialog.showModal();
+}
+purchaseConfirmBtn?.addEventListener('click',async()=>{
+ const action=pendingPurchaseAction;
+ const fs={...purchaseFullscreenState};
+ pendingPurchaseAction=null;
+ purchaseDialog.close();
+
+ // Fullscreen-safe purchase flow:
+ // If Chrome/browser dropped fullscreen while showing the purchase UI,
+ // use this Confirm click (a fresh user gesture) to restore it first.
+ if(fs.native&&!document.fullscreenElement){
+   try{
+     await appShell.requestFullscreen();
+   }catch(_){
+     appShell.classList.add('pseudo-fullscreen');
+     pseudoFullscreen=true;
+   }
+ }
+ if(fs.pseudo&&!document.fullscreenElement&&!appShell.classList.contains('pseudo-fullscreen')){
+   appShell.classList.add('pseudo-fullscreen');
+   pseudoFullscreen=true;
+ }
+ await syncFullscreenState();
+ if(action)action();
+});
+purchaseCancelBtn?.addEventListener('click',()=>{
+ pendingPurchaseAction=null;
+ purchaseDialog.close();
+ purchaseFullscreenState={native:false,pseudo:false};
+});
+purchaseDialog?.addEventListener('cancel',e=>{
+ e.preventDefault();
+ pendingPurchaseAction=null;
+ purchaseDialog.close();
+});
+
 function pickFromRarity(code,rarity,used,allowDuplicate=true){
  const pool=(ALL_CARDS[code]||[]).filter(c=>c.rarity===rarity);if(!pool.length)return null;
  const fresh=pool.filter(c=>!used.has(c.id));const c=pick(fresh.length?fresh:(allowDuplicate?pool:[]));if(c)used.add(c.id);return c
@@ -736,17 +799,26 @@ function buySuperPack(code,qty=1){
  qty=Math.max(1,Math.min(10,Math.floor(Number(qty)||1)));
  const total=qty*SUPER_PACK_PRICE;
  if(getLevel()<10||!SETS[code]||(state.pokecoins||0)<total)return;
- if(currentPack||autoRunning||superPackQueue.length){alert('Finish the current pack before buying Super Packs.');return}
- if(!confirm(`Buy ${qty} ${SETS[code].name} Super Pack${qty===1?'':'s'} for ${total.toLocaleString()} PokéCoins?`))return;
- state.pokecoins-=total;save();SoundFX.buy();activateSeries(code,true);batchUnlimited=false;batchRemainingTotal=0;openQueue=[];queueIndex=0;
- superPackQueue=Array.from({length:qty},(_,i)=>({code,index:i+1,total:qty,cards:makeSuperPackCards(code)}));
- renderLevelUI();switchView('packsView');openNextPurchasedSuperPack()
+ if(currentPack||autoRunning||superPackQueue.length){
+   showLevelToast('Finish the current pack before buying Super Packs.');
+   return;
+ }
+ requestPurchaseConfirmation(
+   `${SETS[code].name} Super Pack`,
+   `Buy ${qty} Super Pack${qty===1?'':'s'} for ${total.toLocaleString()} PokéCoins?`,
+   ()=>{
+     if((state.pokecoins||0)<total)return;
+     state.pokecoins-=total;save();SoundFX.buy();activateSeries(code,true);batchUnlimited=false;batchRemainingTotal=0;openQueue=[];queueIndex=0;
+     superPackQueue=Array.from({length:qty},(_,i)=>({code,index:i+1,total:qty,cards:makeSuperPackCards(code)}));
+     renderLevelUI();switchView('packsView');openNextPurchasedSuperPack();
+   }
+ )
 }
 
 function promoPlaceholder(p){return p.image||cardPlaceholder({set:'MP',name:p.name,rarity:'Mega Promo'})}
 function renderStore(){renderLevelUI();if(getLevel()<10)return;renderSuperPacks();storeCoins.textContent=state.pokecoins||0;storeGrid.innerHTML=PROMOS.map(p=>{const owned=!!state.promos[p.id];return `<div class="store-card"><img src="${promoPlaceholder(p)}" alt="${esc(p.name)}" onerror="this.closest('.promo-card')?.remove()"><h4>${esc(p.name)}</h4><div class="store-meta">Mega Promotional Cards (MP) #${p.no} · Limitless TCG · 🪙 ${p.price}</div><button class="${owned?'secondary':'primary'}" data-buy-promo="${p.id}" ${owned||state.pokecoins<p.price?'disabled':''}>${owned?'Owned':`Buy · 🪙 ${p.price}`}</button></div>`}).join('');storeGrid.querySelectorAll('[data-buy-promo]').forEach(b=>b.addEventListener('click',()=>buyPromo(b.dataset.buyPromo)));renderPromoBinder()}
 function renderPromoBinder(){const owned=PROMOS.filter(p=>state.promos[p.id]);promoGrid.innerHTML=owned.length?owned.map(p=>`<div class="promo-card"><img src="${promoPlaceholder(p)}" alt="${esc(p.name)}" onerror="this.closest('.store-card')?.remove()"><h4>${esc(p.name)}</h4><div class="store-meta">MP #${p.no} · Owned · Promo Binder</div></div>`).join(''):'<div class="sub">No promo cards purchased yet.</div>'}
-function buyPromo(id){if(getLevel()<10)return;const p=PROMO_BY_ID[id];if(!p||state.promos[id]||state.pokecoins<p.price)return;if(!confirm(`Buy ${p.name} for ${p.price} PokéCoins?`))return;SoundFX.buy();state.pokecoins-=p.price;state.promos[id]=1;save();renderStore();renderLevelUI()}
+function buyPromo(id){if(getLevel()<10)return;const p=PROMO_BY_ID[id];if(!p||state.promos[id]||state.pokecoins<p.price)return;requestPurchaseConfirmation(p.name,`Buy ${p.name} for ${p.price.toLocaleString()} PokéCoins?`,()=>{if(state.promos[id]||(state.pokecoins||0)<p.price)return;SoundFX.buy();state.pokecoins-=p.price;state.promos[id]=1;save();renderStore();renderLevelUI()})}
 function sellOneDuplicate(c){if(getLevel()<10||!c)return;const n=countOwned(c);if(n<=1)return;const value=SELL_VALUE[c.rarity]||1;state.collection[c.id]=n-1;state.pokecoins=(state.pokecoins||0)+value;SoundFX.coin(1);save();modalOwned.textContent=`Owned: ${n-1} cop${n-1===1?'y':'ies'}`;renderBinder();renderProfile();applyFeatureLocks()}
 function sellAllDuplicateCards(){if(getLevel()<10)return;let qty=0,coins=0;for(const [id,n] of Object.entries(state.collection)){if(n<=1)continue;const c=BY_ID[id];if(!c)continue;const extra=n-1;qty+=extra;coins+=extra*(SELL_VALUE[c.rarity]||1)}if(!qty){alert('You do not have any duplicates to sell.');return}if(!confirm(`Sell ${qty} duplicate card${qty===1?'':'s'} for ${coins} PokéCoins? One copy of every card will be kept.`))return;for(const [id,n] of Object.entries(state.collection))if(n>1&&BY_ID[id])state.collection[id]=1;state.pokecoins=(state.pokecoins||0)+coins;SoundFX.coin(Math.min(4,qty));save();renderBinder();renderProfile();renderStore();showLevelToast(`🪙 +${coins} PokéCoins`)}
 
