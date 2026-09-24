@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Forge — Private PDF Toolkit</title>
+<meta name="description" content="A fast, privacy-first PDF toolkit that runs in your browser.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.min.mjs" type="module"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{
+  --bg:#f7f8fc;--surface:#fff;--surface2:#f0f2f8;--text:#171923;--muted:#697386;
+  --line:#e4e7ee;--brand:#6558f5;--brand2:#8b5cf6;--good:#16a34a;--danger:#dc2626;
+  --shadow:0 14px 40px rgba(25,33,61,.10);--radius:22px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(255,255,255,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 8px 22px rgba(101,88,245,.25)}
+.top-actions{display:flex;gap:10px;align-items:center}
+.pill{border:1px solid var(--line);background:#fff;padding:9px 14px;border-radius:999px;color:var(--muted);font-weight:700;font-size:13px}
+.hero{padding:72px 24px 48px;text-align:center;max-width:1050px;margin:auto}
+.badge{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:#eeecff;color:#5547e8;font-size:13px;font-weight:800}
+.hero h1{font-size:clamp(42px,7vw,76px);letter-spacing:-.055em;line-height:.98;margin:20px auto 18px;max-width:900px}
+.hero h1 span{background:linear-gradient(90deg,var(--brand),var(--brand2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:0 auto;max-width:680px;color:var(--muted);font-size:18px;line-height:1.65}
+.privacy-row{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:24px}
+.privacy-row span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 13px;font-size:13px;color:var(--muted)}
+.shell{max-width:1200px;margin:auto;padding:0 24px 70px}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:20px}
+.search{flex:1;max-width:420px;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.search input{border:0;outline:0;width:100%;background:transparent}
+.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.tab{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px 14px;border-radius:12px;font-weight:800;font-size:13px}
+.tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{position:relative;min-height:190px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:21px;transition:.2s ease;overflow:hidden}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#d7d7f4}
+.icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:23px;background:#f1efff}
+.card h3{font-size:17px;margin:18px 0 7px}
+.card p{font-size:13px;line-height:1.55;color:var(--muted);margin:0 0 18px}
+.card button{border:0;background:transparent;padding:0;color:var(--brand);font-weight:900}
+.tag{position:absolute;top:14px;right:14px;padding:5px 8px;border-radius:999px;background:#ecfdf3;color:#15803d;font-size:10px;font-weight:900}
+.tag.soon{background:#f3f4f6;color:#6b7280}
+.section-title{margin:44px 0 18px}
+.section-title h2{margin:0 0 6px;font-size:28px;letter-spacing:-.03em}.section-title p{margin:0;color:var(--muted)}
+.drop{border:1.5px dashed #c9ccea;background:#fff;border-radius:24px;padding:34px;text-align:center;min-height:260px;display:grid;place-items:center}
+.drop.drag{border-color:var(--brand);background:#f7f5ff}
+.drop-inner{max-width:540px}
+.big-icon{font-size:44px}
+.drop h2{margin:10px 0 8px}
+.drop p{margin:0 0 20px;color:var(--muted);line-height:1.5}
+.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));padding:13px 19px;border-radius:13px;font-weight:900;box-shadow:0 9px 22px rgba(101,88,245,.22)}
+.secondary{border:1px solid var(--line);background:#fff;padding:12px 16px;border-radius:13px;font-weight:800}
+.workspace{display:none;margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px}
+.workspace.show{display:block}
+.ws-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.ws-title h2{margin:0 0 4px}.ws-title p{margin:0;color:var(--muted);font-size:13px}
+.files{display:grid;gap:10px;margin:14px 0}
+.file-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 14px;background:var(--surface2);border-radius:13px}
+.file-meta strong{display:block;font-size:13px}.file-meta span{font-size:12px;color:var(--muted)}
+.file-row button{border:0;background:transparent;color:var(--danger);font-weight:900}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:16px;border-top:1px solid var(--line)}
+.field{display:flex;align-items:center;gap:8px;background:var(--surface2);padding:10px 12px;border-radius:12px}
+.field input,.field select{border:0;outline:0;background:transparent;min-width:110px}
+.status{margin-top:15px;padding:12px 14px;border-radius:12px;background:#f5f6fa;color:var(--muted);font-size:13px;display:none}
+.status.show{display:block}.status.ok{background:#ecfdf3;color:#166534}.status.err{background:#fef2f2;color:#991b1b}
+.footer{text-align:center;color:var(--muted);font-size:12px;padding:30px 20px 45px}
+.hidden{display:none!important}
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.topbar{padding:12px 16px}.top-actions .pill{display:none}.hero{padding-top:48px}.grid{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.search{max-width:none}.ws-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">P</div>PDF Forge</div>
+  <div class="top-actions"><span class="pill">🔒 Local processing</span><button class="pill" onclick="scrollToTools()">All tools</button></div>
+</header>
+
+<section class="hero">
+  <span class="badge">⚡ Privacy-first PDF workspace</span>
+  <h1>Your PDF toolbox, <span>without the clutter.</span></h1>
+  <p>Merge, split, rotate, extract, convert and organize documents in one polished workspace. Supported tools run locally in your browser, so your PDFs stay on your device.</p>
+  <div class="privacy-row"><span>✓ No account required</span><span>✓ Drag & drop</span><span>✓ Desktop + tablet friendly</span><span>✓ Local processing</span></div>
+</section>
+
+<main class="shell" id="tools">
+  <div class="toolbar">
+    <div class="search">⌕ <input id="search" placeholder="Search PDF tools..." oninput="filterTools()"></div>
+    <div class="tabs">
+      <button class="tab active" data-cat="all" onclick="setTab(this)">All</button>
+      <button class="tab" data-cat="organize" onclick="setTab(this)">Organize</button>
+      <button class="tab" data-cat="convert" onclick="setTab(this)">Convert</button>
+      <button class="tab" data-cat="edit" onclick="setTab(this)">Edit</button>
+    </div>
+  </div>
+
+  <section class="grid" id="toolGrid">
+    <article class="card" data-cat="organize" data-name="merge pdf combine">
+      <span class="tag">WORKS NOW</span><div class="icon">🧩</div><h3>Merge PDF</h3><p>Combine multiple PDF files in the order you select.</p><button onclick="openTool('merge')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="organize" data-name="split extract pdf pages">
+      <span class="tag">WORKS NOW</span><div class="icon">✂️</div><h3>Split / Extract</h3><p>Choose page ranges or individual pages and create a new PDF.</p><button onclick="openTool('extract')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="edit" data-name="rotate pdf">
+      <span class="tag">WORKS NOW</span><div class="icon">🔄</div><h3>Rotate PDF</h3><p>Rotate every page 90°, 180° or 270° in one click.</p><button onclick="openTool('rotate')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="edit" data-name="page numbers pdf number">
+      <span class="tag">WORKS NOW</span><div class="icon">#️⃣</div><h3>Page Numbers</h3><p>Add clean page numbering to the bottom of your PDF.</p><button onclick="openTool('numbers')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="convert" data-name="jpg image png to pdf">
+      <span class="tag">WORKS NOW</span><div class="icon">🖼️</div><h3>Images → PDF</h3><p>Turn JPG or PNG images into a single PDF document.</p><button onclick="openTool('imgpdf')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="organize" data-name="remove pages delete">
+      <span class="tag">WORKS NOW</span><div class="icon">🗑️</div><h3>Remove Pages</h3><p>Delete selected pages while keeping everything else intact.</p><button onclick="openTool('remove')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="edit" data-name="watermark stamp pdf">
+      <span class="tag">WORKS NOW</span><div class="icon">💧</div><h3>Watermark</h3><p>Add a centered text watermark with adjustable opacity.</p><button onclick="openTool('watermark')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="organize" data-name="pdf information metadata pages">
+      <span class="tag">WORKS NOW</span><div class="icon">🔎</div><h3>PDF Inspector</h3><p>Check page count, file size and document metadata locally.</p><button onclick="openTool('inspect')">Open tool →</button>
+    </article>
+    <article class="card" data-cat="convert" data-name="compress pdf reduce file size">
+      <span class="tag soon">PLANNED</span><div class="icon">🗜️</div><h3>Smart Compress</h3><p>Advanced image recompression and document optimization.</p><button onclick="planned('Smart Compress')">Preview →</button>
+    </article>
+    <article class="card" data-cat="convert" data-name="pdf word docx">
+      <span class="tag soon">BACKEND</span><div class="icon">W</div><h3>PDF ↔ Word</h3><p>High-quality editable document conversion.</p><button onclick="planned('PDF ↔ Word')">Preview →</button>
+    </article>
+    <article class="card" data-cat="convert" data-name="ocr scan text pdf">
+      <span class="tag soon">PLANNED</span><div class="icon">👁️</div><h3>OCR</h3><p>Recognize text in scans and make documents searchable.</p><button onclick="planned('OCR')">Preview →</button>
+    </article>
+    <article class="card" data-cat="edit" data-name="sign signature pdf">
+      <span class="tag soon">PLANNED</span><div class="icon">✍️</div><h3>Sign PDF</h3><p>Draw, upload or type a signature and place it precisely.</p><button onclick="planned('Sign PDF')">Preview →</button>
+    </article>
+  </section>
+
+  <div class="section-title"><h2>Workspace</h2><p>Select a tool above, drop your files here, then process them locally.</p></div>
+
+  <section class="drop" id="dropZone">
+    <div class="drop-inner">
+      <div class="big-icon">📄</div>
+      <h2 id="dropTitle">Choose a tool to begin</h2>
+      <p id="dropText">Pick any tool marked “Works now”, then add your document.</p>
+      <button class="primary" id="pickBtn" onclick="pickFiles()" disabled>Select files</button>
+      <input id="fileInput" type="file" class="hidden" multiple>
+    </div>
+  </section>
+
+  <section class="workspace" id="workspace">
+    <div class="ws-head">
+      <div class="ws-title"><h2 id="wsName">Tool</h2><p id="wsDesc"></p></div>
+      <button class="secondary" onclick="clearFiles()">Clear files</button>
+    </div>
+    <div id="fileList" class="files"></div>
+    <div id="toolControls" class="controls"></div>
+    <div id="status" class="status"></div>
+  </section>
+</main>
+
+<footer class="footer">PDF Forge • Browser-first document tools • Files are not uploaded by this page for supported local tools.</footer>
+
+<script>
+const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
+let activeTool = null;
+let files = [];
+let activeCat = 'all';
+
+const toolInfo = {
+  merge:{name:'Merge PDF',desc:'Add two or more PDFs. They will be combined in the order shown.',accept:'.pdf',multi:true},
+  extract:{name:'Split / Extract Pages',desc:'Enter pages like 1-3,5,8 to create a new PDF.',accept:'.pdf',multi:false},
+  rotate:{name:'Rotate PDF',desc:'Rotate every page of one PDF.',accept:'.pdf',multi:false},
+  numbers:{name:'Add Page Numbers',desc:'Add page numbers at the bottom of each page.',accept:'.pdf',multi:false},
+  imgpdf:{name:'Images → PDF',desc:'Combine JPG/PNG images into one A4-ish PDF.',accept:'image/jpeg,image/png',multi:true},
+  remove:{name:'Remove Pages',desc:'Enter pages to delete, such as 2,4-6.',accept:'.pdf',multi:false},
+  watermark:{name:'Text Watermark',desc:'Add a centered watermark to every page.',accept:'.pdf',multi:false},
+  inspect:{name:'PDF Inspector',desc:'Read basic file and PDF metadata without changing the file.',accept:'.pdf',multi:false}
+};
+
+function scrollToTools(){document.getElementById('tools').scrollIntoView({behavior:'smooth'})}
+function setTab(el){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');activeCat=el.dataset.cat;filterTools()}
+function filterTools(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  document.querySelectorAll('.card').forEach(c=>{
+    const catOK=activeCat==='all'||c.dataset.cat===activeCat;
+    const qOK=!q||c.dataset.name.includes(q);
+    c.classList.toggle('hidden',!(catOK&&qOK));
+  });
+}
+function openTool(id){
+  activeTool=id; files=[];
+  const t=toolInfo[id];
+  const input=document.getElementById('fileInput');
+  input.accept=t.accept; input.multiple=t.multi;
+  document.getElementById('dropTitle').textContent=t.name;
+  document.getElementById('dropText').textContent=t.desc+' Drop files here or choose from your device.';
+  document.getElementById('pickBtn').disabled=false;
+  document.getElementById('wsName').textContent=t.name;
+  document.getElementById('wsDesc').textContent=t.desc;
+  document.getElementById('workspace').classList.add('show');
+  renderFiles(); renderControls(); setStatus('');
+  document.getElementById('dropZone').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function planned(name){alert(name+' is reserved for the next build. This feature needs a heavier browser engine or a small backend for reliable results.')}
+function pickFiles(){document.getElementById('fileInput').click()}
+document.getElementById('fileInput').addEventListener('change',e=>addFiles([...e.target.files]));
+const dz=document.getElementById('dropZone');
+['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();if(activeTool)dz.classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag')}));
+dz.addEventListener('drop',e=>{if(activeTool)addFiles([...e.dataTransfer.files])});
+
+function addFiles(incoming){
+  if(!activeTool)return;
+  const t=toolInfo[activeTool];
+  const valid=incoming.filter(f=>{
+    if(t.accept==='.pdf') return f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf');
+    return ['image/jpeg','image/png'].includes(f.type);
+  });
+  files=t.multi?[...files,...valid]:valid.slice(0,1);
+  renderFiles(); renderControls();
+}
+function removeFile(i){files.splice(i,1);renderFiles()}
+function clearFiles(){files=[];document.getElementById('fileInput').value='';renderFiles();setStatus('')}
+function size(n){if(n<1024)return n+' B';if(n<1048576)return(n/1024).toFixed(1)+' KB';return(n/1048576).toFixed(2)+' MB'}
+function renderFiles(){
+  const el=document.getElementById('fileList');
+  if(!files.length){el.innerHTML='<div class="file-row"><div class="file-meta"><strong>No files selected</strong><span>Add file(s) above to continue.</span></div></div>';return}
+  el.innerHTML=files.map((f,i)=>`<div class="file-row"><div class="file-meta"><strong>${escapeHtml(f.name)}</strong><span>${size(f.size)}</span></div><button onclick="removeFile(${i})">Remove</button></div>`).join('');
+}
+function renderControls(){
+  const c=document.getElementById('toolControls');
+  if(!activeTool){c.innerHTML='';return}
+  let extra='';
+  if(activeTool==='extract') extra='<label class="field">Pages <input id="pages" placeholder="1-3,5"></label>';
+  if(activeTool==='remove') extra='<label class="field">Delete pages <input id="pages" placeholder="2,4-6"></label>';
+  if(activeTool==='rotate') extra='<label class="field">Rotation <select id="angle"><option>90</option><option>180</option><option>270</option></select></label>';
+  if(activeTool==='numbers') extra='<label class="field">Start at <input id="startNo" type="number" value="1" min="1"></label>';
+  if(activeTool==='watermark') extra='<label class="field">Text <input id="wmText" value="CONFIDENTIAL"></label><label class="field">Opacity <input id="opacity" type="number" value="0.18" min="0.05" max="1" step="0.05"></label>';
+  c.innerHTML=extra+`<button class="primary" onclick="processTool()">${activeTool==='inspect'?'Inspect PDF':'Process & Download'}</button>`;
+}
+function setStatus(msg,type=''){
+  const s=document.getElementById('status');
+  s.textContent=msg;s.className='status'+(msg?' show':'')+(type?' '+type:'');
+}
+function parsePages(str,total){
+  const set=new Set();
+  str.split(',').map(x=>x.trim()).filter(Boolean).forEach(part=>{
+    if(part.includes('-')){
+      let [a,b]=part.split('-').map(Number);
+      if(Number.isInteger(a)&&Number.isInteger(b)){if(a>b)[a,b]=[b,a];for(let i=a;i<=b;i++)if(i>=1&&i<=total)set.add(i-1)}
+    }else{
+      const n=Number(part);if(Number.isInteger(n)&&n>=1&&n<=total)set.add(n-1);
+    }
+  });
+  return [...set].sort((a,b)=>a-b);
+}
+function download(bytes,name,type='application/pdf'){
+  const blob=new Blob([bytes],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)
+}
+async function processTool(){
+  try{
+    if(!files.length) throw new Error('Please add the required file first.');
+    setStatus('Processing locally in your browser…');
+    if(activeTool==='merge') await mergePDF();
+    if(activeTool==='extract') await extractPDF(false);
+    if(activeTool==='remove') await extractPDF(true);
+    if(activeTool==='rotate') await rotatePDF();
+    if(activeTool==='numbers') await numberPDF();
+    if(activeTool==='watermark') await watermarkPDF();
+    if(activeTool==='imgpdf') await imagesToPDF();
+    if(activeTool==='inspect') await inspectPDF();
+  }catch(e){console.error(e);setStatus(e.message||'Something went wrong.','err')}
+}
+async function mergePDF(){
+  if(files.length<2)throw new Error('Add at least two PDF files to merge.');
+  const out=await PDFDocument.create();
+  for(const f of files){const d=await PDFDocument.load(await f.arrayBuffer());const pages=await out.copyPages(d,d.getPageIndices());pages.forEach(p=>out.addPage(p))}
+  download(await out.save(),'merged.pdf');setStatus('Merged successfully. Your download has started.','ok')
+}
+async function extractPDF(removing){
+  const src=await PDFDocument.load(await files[0].arrayBuffer());
+  const chosen=parsePages(document.getElementById('pages').value,src.getPageCount());
+  if(!chosen.length)throw new Error('Enter at least one valid page number.');
+  let keep=removing?src.getPageIndices().filter(i=>!chosen.includes(i)):chosen;
+  if(!keep.length)throw new Error('You cannot remove every page from the PDF.');
+  const out=await PDFDocument.create();const pages=await out.copyPages(src,keep);pages.forEach(p=>out.addPage(p));
+  download(await out.save(),removing?'pages-removed.pdf':'extracted-pages.pdf');setStatus('Done. Your new PDF is downloading.','ok')
+}
+async function rotatePDF(){
+  const doc=await PDFDocument.load(await files[0].arrayBuffer());const add=Number(document.getElementById('angle').value);
+  doc.getPages().forEach(p=>{const old=p.getRotation().angle||0;p.setRotation(degrees((old+add)%360))});
+  download(await doc.save(),'rotated.pdf');setStatus('Rotation applied successfully.','ok')
+}
+async function numberPDF(){
+  const doc=await PDFDocument.load(await files[0].arrayBuffer());const font=await doc.embedFont(StandardFonts.Helvetica);const start=Number(document.getElementById('startNo').value)||1;
+  doc.getPages().forEach((p,i)=>{const txt=String(start+i);const fs=10;const w=font.widthOfTextAtSize(txt,fs);p.drawText(txt,{x:(p.getWidth()-w)/2,y:18,size:fs,font,color:rgb(.25,.25,.3)})});
+  download(await doc.save(),'numbered.pdf');setStatus('Page numbers added.','ok')
+}
+async function watermarkPDF(){
+  const doc=await PDFDocument.load(await files[0].arrayBuffer());const font=await doc.embedFont(StandardFonts.HelveticaBold);const text=document.getElementById('wmText').value||'CONFIDENTIAL';const opacity=Math.max(.05,Math.min(1,Number(document.getElementById('opacity').value)||.18));
+  doc.getPages().forEach(p=>{let fs=Math.min(56,p.getWidth()/8);const tw=font.widthOfTextAtSize(text,fs);p.drawText(text,{x:(p.getWidth()-tw)/2,y:p.getHeight()/2,size:fs,font,color:rgb(.45,.45,.52),opacity,rotate:degrees(-30)})});
+  download(await doc.save(),'watermarked.pdf');setStatus('Watermark added.','ok')
+}
+async function imagesToPDF(){
+  const doc=await PDFDocument.create();
+  for(const f of files){
+    const buf=await f.arrayBuffer();const img=f.type==='image/png'?await doc.embedPng(buf):await doc.embedJpg(buf);
+    const iw=img.width,ih=img.height,maxW=595,maxH=842;const scale=Math.min(maxW/iw,maxH/ih,1);const w=iw*scale,h=ih*scale;
+    const page=doc.addPage([Math.max(w,200),Math.max(h,200)]);page.drawImage(img,{x:(page.getWidth()-w)/2,y:(page.getHeight()-h)/2,width:w,height:h});
+  }
+  download(await doc.save(),'images.pdf');setStatus('Images converted successfully.','ok')
+}
+async function inspectPDF(){
+  const doc=await PDFDocument.load(await files[0].arrayBuffer(),{updateMetadata:false});
+  const rows=[
+    `File: ${files[0].name}`,`Size: ${size(files[0].size)}`,`Pages: ${doc.getPageCount()}`,
+    `Title: ${doc.getTitle()||'—'}`,`Author: ${doc.getAuthor()||'—'}`,`Subject: ${doc.getSubject()||'—'}`,
+    `Creator: ${doc.getCreator()||'—'}`,`Producer: ${doc.getProducer()||'—'}`
+  ];
+  setStatus(rows.join('   •   '),'ok')
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+renderFiles();
+</script>
+</body>
+</html>
