@@ -277,7 +277,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · GOOGLE DRIVE CLOUD SAVE 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · STARTUP + CUSTOM SWIPE FIX · 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">120 cards</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="level-chip">Lv <span id="headerLevel">1</span> · 🪙 <span id="headerCoins">0</span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button></div>
@@ -380,7 +380,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
   </section>
  </main>
 
- <div class="footer-note" id="footerNote">Build: Mobile Clickable Fix 2026-09-24 · Multi-series simulator: Ninja Spinner (M4), Abyss Eye (M5), and Storm Emeralda (M6). Each Japanese box is simulated as 30 packs with 5 cards per pack. Cards are unique within each pack, and RR/AR/SR/SAR/MUR hits are placed as the final card. Simulated collation is not an official Pokémon Company guarantee.</div>
+ <div class="footer-note" id="footerNote">Build: Startup + Custom Swipe Fix 2026-09-24 · Multi-series simulator: Ninja Spinner (M4), Abyss Eye (M5), and Storm Emeralda (M6). Each Japanese box is simulated as 30 packs with 5 cards per pack. Cards are unique within each pack, and RR/AR/SR/SAR/MUR hits are placed as the final card. Simulated collation is not an official Pokémon Company guarantee.</div>
 </div></div>
 
 <div id="tutorialOverlay" class="tutorial-overlay" hidden aria-modal="true" role="dialog" aria-label="Simulator tutorial">
@@ -410,14 +410,16 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 </dialog>
 
 <dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
+<audio id="customSwipeSound" preload="auto" src="data:audio/mpeg;base64,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px5H1UxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU=" style="display:none"></audio>
 <script>
+const SafeStorage=(()=>{try{const s=window.localStorage;const k='__dtyc_storage_test__';s.setItem(k,'1');s.removeItem(k);return s}catch(_){const m=new Map();return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k),clear:()=>m.clear()}}})();
 const $=id=>document.getElementById(id);
 const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','driveSave','driveLoad','driveDisconnect'].forEach(id=>E[id]=$(id));
 const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,driveSave,driveLoad,driveDisconnect}=E;
 // --- Built-in sound engine (Web Audio API; no external audio files required) ---
 const SoundFX=(()=>{
  let ctx=null,master=null;
- let enabled=localStorage.getItem('pokemonSimSound')!=='off';
+ let enabled=SafeStorage.getItem('pokemonSimSound')!=='off';
  const AC=window.AudioContext||window.webkitAudioContext;
  function init(){if(!AC)return null;if(!ctx){ctx=new AC();master=ctx.createGain();master.gain.value=.385;master.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume().catch(()=>{});return ctx}
  function tone(freq=440,dur=.08,type='sine',vol=.2,delay=0,endFreq=null){if(!enabled)return;const c=init();if(!c)return;const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(endFreq)o.frequency.exponentialRampToValueAtTime(Math.max(20,endFreq),t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.03)}
@@ -429,7 +431,17 @@ const SoundFX=(()=>{
    if(isNew)newBinder();
    if(rarity==='MUR')mur(); else if(rarity==='SAR')sar(); else if(rarity==='SR')sr(); else if(rarity==='MA')ma(); else if(rarity==='AR')ar(); else if(rarity==='RR')rr();
  }
- function swipe(dir='left'){noise(.09,.055,0,900);tone(dir==='up'?520:dir==='right'?420:350,.07,'triangle',.035)}
+ function swipe(dir='left'){
+   if(!enabled)return;
+   try{
+     const a=document.getElementById('customSwipeSound');
+     if(!a)return;
+     a.pause();
+     a.currentTime=0;
+     const p=a.play();
+     if(p&&typeof p.catch==='function')p.catch(()=>{});
+   }catch(_){}
+ }
  function rr(){chord([523,659],.14,.075,.055,'triangle')}
  function ar(){chord([659,784,988],.2,.075,.055,'sine')}
  function sr(){chord([523,659,784,1047],.26,.09,.045,'sine')}
@@ -441,7 +453,7 @@ const SoundFX=(()=>{
  function levelUp(){chord([392,494,587,784,988],.35,.1,.075,'sine')}
  function coin(count=1){const n=Math.min(4,Math.max(1,count));for(let i=0;i<n;i++){tone(1250+i*110,.09,'sine',.07,i*.055);tone(1850+i*130,.055,'sine',.035,i*.055+.018)}}
  function buy(){tone(900,.07,'triangle',.06);tone(650,.09,'triangle',.055,.06);tone(1100,.15,'sine',.08,.13)}
- function setEnabled(v){enabled=!!v;localStorage.setItem('pokemonSimSound',enabled?'on':'off');updateButton();if(enabled){init();click()}}
+ function setEnabled(v){enabled=!!v;SafeStorage.setItem('pokemonSimSound',enabled?'on':'off');updateButton();if(enabled){init();click()}}
  function updateButton(){if(typeof soundToggle!=='undefined'&&soundToggle){soundToggle.textContent=enabled?'🔊 Sound On':'🔇 Sound Off';soundToggle.setAttribute('aria-pressed',String(enabled))}}
  function daily(){chord([659,784,988],.2,.07,.05,'triangle')}
  return {init,click,newBinder,reveal,swipe,rr,ar,sr,ma,sar,mur,god,achievement,levelUp,daily,coin,buy,setEnabled,updateButton,get enabled(){return enabled}};
@@ -697,8 +709,8 @@ const BY_ID=Object.fromEntries(Object.values(ALL_CARDS).flat().map(c=>[c.id,c]))
 let state={profileName:'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:{},daily:{date:'',packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,progressionVersion:3,xpVersion:0};
 let hadExistingSave=false;
 try{
- let raw=localStorage.getItem(STORAGE);
- if(!raw){for(const k of OLD_KEYS){raw=localStorage.getItem(k);if(raw)break}}
+ let raw=SafeStorage.getItem(STORAGE);
+ if(!raw){for(const k of OLD_KEYS){raw=SafeStorage.getItem(k);if(raw)break}}
  const saved=JSON.parse(raw||'null');
  if(saved&&saved.collection){
    hadExistingSave=true;
@@ -713,7 +725,7 @@ if(!state.promos)state.promos={};if(!state.setCompletionXp)state.setCompletionXp
 if(Object.keys(state.collection||{}).some(k=>!k.includes(':'))){const m={};for(const [k,v] of Object.entries(state.collection))m[k.includes(':')?k:`M4:${String(k).padStart(3,'0')}`]=(m[k.includes(':')?k:`M4:${String(k).padStart(3,'0')}`]||0)+v;state.collection=m}
 for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}};if(!state.seriesStats[s.name].rarities)state.seriesStats[s.name].rarities={}}
 if(!state.binderCoinRewards)state.binderCoinRewards={};if(!state.dailyLogin)state.dailyLogin={lastDate:'',day:0};
-const save=()=>{try{localStorage.setItem(STORAGE,JSON.stringify(state));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(Date.now()));scheduleDriveAutosave();return true}catch(e){return false}};
+const save=()=>{try{SafeStorage.setItem(STORAGE,JSON.stringify(state));SafeStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(Date.now()));scheduleDriveAutosave();return true}catch(e){return false}};
 
 
 // ---------------- Google Drive cloud save ----------------
@@ -798,29 +810,29 @@ async function createDriveFolder(){
  return r.json();
 }
 async function ensureDriveFolder(){
- let id=localStorage.getItem(DRIVE_FOLDER_KEY)||'';
+ let id=SafeStorage.getItem(DRIVE_FOLDER_KEY)||'';
  if(id){
-   try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,trashed');return id}catch(_){localStorage.removeItem(DRIVE_FOLDER_KEY);id=''}
+   try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,trashed');return id}catch(_){SafeStorage.removeItem(DRIVE_FOLDER_KEY);id=''}
  }
  let folder=await findDriveItem(DRIVE_FOLDER_NAME,'application/vnd.google-apps.folder');
  if(!folder)folder=await createDriveFolder();
- id=folder.id;localStorage.setItem(DRIVE_FOLDER_KEY,id);return id;
+ id=folder.id;SafeStorage.setItem(DRIVE_FOLDER_KEY,id);return id;
 }
 async function ensureDriveSaveFile(createIfMissing=false){
  const folderId=await ensureDriveFolder();
- let id=localStorage.getItem(DRIVE_FILE_KEY)||'';
+ let id=SafeStorage.getItem(DRIVE_FILE_KEY)||'';
  if(id){
-   try{const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,name,modifiedTime,trashed');const f=await r.json();if(!f.trashed)return f}catch(_){localStorage.removeItem(DRIVE_FILE_KEY);id=''}
+   try{const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,name,modifiedTime,trashed');const f=await r.json();if(!f.trashed)return f}catch(_){SafeStorage.removeItem(DRIVE_FILE_KEY);id=''}
  }
  let file=await findDriveItem(DRIVE_SAVE_FILE,'application/json',folderId);
- if(file){localStorage.setItem(DRIVE_FILE_KEY,file.id);return file}
+ if(file){SafeStorage.setItem(DRIVE_FILE_KEY,file.id);return file}
  if(!createIfMissing)return null;
  const boundary='-------pokemon-pack-'+Math.random().toString(16).slice(2);
  const metadata={name:DRIVE_SAVE_FILE,mimeType:'application/json',parents:[folderId]};
  const payload=JSON.stringify(makeDrivePayload());
  const body=`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${payload}\r\n--${boundary}--`;
  const r=await driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body});
- file=await r.json();localStorage.setItem(DRIVE_FILE_KEY,file.id);return file;
+ file=await r.json();SafeStorage.setItem(DRIVE_FILE_KEY,file.id);return file;
 }
 function makeDrivePayload(){return {format:'pokemon-pack-simulator-cloud-save-v1',updatedAt:new Date().toISOString(),state}}
 async function uploadStateToDrive(manual=false){
@@ -831,7 +843,7 @@ async function uploadStateToDrive(manual=false){
    const payload=JSON.stringify(makeDrivePayload(),null,2);
    const r=await driveFetch('https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(file.id)+'?uploadType=media&fields=id,modifiedTime',{method:'PATCH',headers:{'Content-Type':'application/json'},body:payload});
    const updated=await r.json();
-   const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
+   const now=Date.now();SafeStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));SafeStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
    setDriveStatus('☁ Synced','ok');return updated;
  }catch(e){setDriveStatus('☁ Save failed · '+e.message,'warn');return false}
  finally{driveSyncBusy=false;setDriveButtonsAfterBusy()}
@@ -853,8 +865,8 @@ async function downloadStateFromDrive(manual=false){
    state={...state,...incoming};
    for(const code of SERIES_ORDER){const ss=SETS[code];if(!state.seriesStats?.[ss.name]){state.seriesStats=state.seriesStats||{};state.seriesStats[ss.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}}
    if(typeof state.progressionVersion!=='number')state.progressionVersion=1;migrateProgressionToV3();
-   localStorage.setItem(STORAGE,JSON.stringify(state));
-   const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
+   SafeStorage.setItem(STORAGE,JSON.stringify(state));
+   const now=Date.now();SafeStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));SafeStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
    refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();
    setDriveStatus('☁ Synced','ok');return true;
  }catch(e){setDriveStatus('☁ Load failed · '+e.message,'warn');return false}
@@ -867,7 +879,7 @@ function scheduleDriveAutosave(){
 }
 async function prepareDriveAfterAuth({firstConnect=false}={}){
  driveReady=true;
- localStorage.setItem(DRIVE_CONNECTED_KEY,'1');
+ SafeStorage.setItem(DRIVE_CONNECTED_KEY,'1');
  setDriveStatus('☁ Connected · checking cloud save…','sync');
 
  const remote=await ensureDriveSaveFile(false);
@@ -895,11 +907,11 @@ async function connectGoogleDrive(interactive=true){
 function disconnectGoogleDrive(){
  if(driveAccessToken&&window.google?.accounts?.oauth2){try{google.accounts.oauth2.revoke(driveAccessToken,()=>{})}catch(_){}}
  driveAccessToken='';driveTokenExpiresAt=0;driveReady=false;driveInitialSyncDone=false;clearTimeout(driveAutosaveTimer);
- localStorage.removeItem(DRIVE_CONNECTED_KEY);localStorage.removeItem(DRIVE_FOLDER_KEY);localStorage.removeItem(DRIVE_FILE_KEY);localStorage.removeItem(DRIVE_LAST_SYNC_KEY);
+ SafeStorage.removeItem(DRIVE_CONNECTED_KEY);SafeStorage.removeItem(DRIVE_FOLDER_KEY);SafeStorage.removeItem(DRIVE_FILE_KEY);SafeStorage.removeItem(DRIVE_LAST_SYNC_KEY);
  setDriveStatus('☁ Not connected');setDriveButtonsAfterBusy();
 }
 async function autoReconnectGoogleDrive(){
- if(localStorage.getItem(DRIVE_CONNECTED_KEY)!=='1'){setDriveStatus('☁ Not connected');return}
+ if(SafeStorage.getItem(DRIVE_CONNECTED_KEY)!=='1'){setDriveStatus('☁ Not connected');return}
  try{await connectGoogleDrive(false)}catch(_){setDriveStatus('☁ Reconnect when needed')}
 }
 
@@ -1851,7 +1863,7 @@ soundToggle.addEventListener('click',()=>SoundFX.setEnabled(!SoundFX.enabled));S
 document.addEventListener('pointerdown',e=>{if(!SoundFX.enabled)return;const b=e.target.closest?.('button');if(b&&b!==soundToggle&&!b.disabled)SoundFX.click()},{passive:true});
 fullscreenBtn.addEventListener('click',()=>toggleFullscreen(false));document.addEventListener('fullscreenchange',syncFullscreenState);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&isFullscreenMode())requestWakeLock();else if(document.visibilityState!=='visible')releaseWakeLock()});enterSimulatorBtn.addEventListener('click',()=>{SoundFX.init();entryOverlay.style.display='none';switchView('packsView')});
 
-const progressionMigrated=migrateProgressionToV3();if(progressionMigrated)save();ensureDaily();claimDailyLogin();neutralSeriesState();renderProfile();updateWelcome();applyFeatureLocks();checkAchievements();switchView('packsView');
+const progressionMigrated=migrateProgressionToV3();if(progressionMigrated)save();ensureDaily();claimDailyLogin();activateSeries('M4',true);renderProfile();updateWelcome();applyFeatureLocks();checkAchievements();switchView('packsView');
 setTimeout(autoReconnectGoogleDrive,120);
 if(!state.tutorialCompleted&&!hadExistingSave)setTimeout(()=>{
  if(!driveSyncBusy&&!driveReady)startTutorial(false);
