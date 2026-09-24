@@ -265,7 +265,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · EARLY PROGRESSION BALANCE 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · PROGRESSION V3 2026-09-24</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">120 cards</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="level-chip">Lv <span id="headerLevel">1</span> · 🪙 <span id="headerCoins">0</span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button></div>
@@ -589,7 +589,7 @@ function buildSet(set){
 }
 const ALL_CARDS=Object.fromEntries(Object.entries(SETS).map(([c,s])=>[c,buildSet(s)]));
 const BY_ID=Object.fromEntries(Object.values(ALL_CARDS).flat().map(c=>[c.id,c]));
-let state={profileName:'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:{},daily:{date:'',packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,progressionVersion:2,xpVersion:0};
+let state={profileName:'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:{},daily:{date:'',packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,progressionVersion:3,xpVersion:0};
 let hadExistingSave=false;
 try{
  let raw=localStorage.getItem(STORAGE);
@@ -598,7 +598,6 @@ try{
  if(saved&&saved.collection){
    hadExistingSave=true;
    state={...state,...saved};
-   // Existing saves keep the original level curve so established levels do not drop.
    if(typeof saved.progressionVersion!=='number')state.progressionVersion=1;
    if(typeof saved.tutorialCompleted!=='boolean')state.tutorialCompleted=true;
  }
@@ -616,8 +615,6 @@ let CURRENT_SERIES='',cards=[],pools={},box=[],selected=0,currentPack=null,curre
 function xpForNextV1(level){if(level>=200)return 0;if(level<=20)return 80+8*level;if(level<=50)return 220+14*(level-20);if(level<=100)return 650+25*(level-50);if(level<=150)return 1950+40*(level-100);return 4000+60*(level-150)}
 function xpForNextV2(level){
  if(level>=200)return 0;
- // Slower early game. Lv10 requires 2,700 cumulative XP,
- // then the curve opens up gradually instead of immediately accelerating.
  if(level<=9)return [150,180,220,260,300,340,380,420,450][level-1];
  if(level<=20)return 500+40*(level-10);
  if(level<=50)return 900+22*(level-20);
@@ -625,10 +622,125 @@ function xpForNextV2(level){
  if(level<=150)return 3200+48*(level-100);
  return 5700+70*(level-150);
 }
-function xpForNext(level){return state.progressionVersion===2?xpForNextV2(level):xpForNextV1(level)}
+
+// Progression V3 checkpoint targets (cumulative XP at the stated level).
+const V3_XP_POINTS=[
+ [1,0],
+ [10,3000],
+ [20,15000],
+ [30,35000],
+ [40,65000],
+ [50,100000],
+ [75,225000],
+ [100,400000],
+ [125,650000],
+ [150,950000],
+ [175,1350000],
+ [200,1900000]
+];
+
+function cumulativeXpV3(level){
+ level=Math.max(1,Math.min(200,Math.floor(level)));
+ if(level<=1)return 0;
+ for(let i=0;i<V3_XP_POINTS.length-1;i++){
+   const [l1,x1]=V3_XP_POINTS[i], [l2,x2]=V3_XP_POINTS[i+1];
+   if(level<=l2){
+     const t=(level-l1)/(l2-l1);
+     // Slight ease-in within each segment so the end of each bracket feels harder.
+     const eased=.35*t+.65*t*t;
+     return Math.round(x1+(x2-x1)*eased);
+   }
+ }
+ return V3_XP_POINTS[V3_XP_POINTS.length-1][1];
+}
+
+function xpForNextV3(level){
+ if(level>=200)return 0;
+ return Math.max(1,cumulativeXpV3(level+1)-cumulativeXpV3(level));
+}
+
+function xpForNext(level){
+ if(state.progressionVersion===3)return xpForNextV3(level);
+ if(state.progressionVersion===2)return xpForNextV2(level);
+ return xpForNextV1(level);
+}
+
 const EARLY_PACK_GATES={2:5,3:10,4:15,5:20,6:28,7:36,8:44,9:52,10:60};
 function packGateForLevel(level){
- return state.progressionVersion===2?(EARLY_PACK_GATES[level]||0):0;
+ return state.progressionVersion>=2?(EARLY_PACK_GATES[level]||0):0;
+}
+
+function levelInfoForVersion(xp,version,packsOpened=Infinity){
+ const prevVersion=state.progressionVersion;
+ state.progressionVersion=version;
+ let theoreticalLevel=1,rem=Math.max(0,Math.floor(xp));
+ while(theoreticalLevel<200){
+   const need=xpForNext(theoreticalLevel);
+   if(rem<need)break;
+   rem-=need;
+   theoreticalLevel++;
+ }
+
+ let level=theoreticalLevel;
+ let packGate=false;
+ let gateTarget=0;
+
+ if(version>=2){
+   for(let target=2;target<=10;target++){
+     const required=EARLY_PACK_GATES[target]||0;
+     if(level>=target && packsOpened<required){
+       level=target-1;
+       packGate=true;
+       gateTarget=required;
+       break;
+     }
+   }
+ }
+
+ let used=0;
+ for(let l=1;l<level;l++)used+=xpForNext(l);
+ const visibleRem=Math.max(0,Math.floor(xp)-used);
+ state.progressionVersion=prevVersion;
+
+ return {
+   level,
+   current:packGate?packsOpened:visibleRem,
+   need:packGate?gateTarget:(level>=200?0:(version===3?xpForNextV3(level):version===2?xpForNextV2(level):xpForNextV1(level))),
+   packGate,
+   gateTarget,
+   theoreticalLevel
+ };
+}
+
+function cumulativeXpForVersion(level,version){
+ if(level<=1)return 0;
+ if(version===3)return cumulativeXpV3(level);
+ let sum=0;
+ for(let l=1;l<level;l++){
+   sum+=version===2?xpForNextV2(l):xpForNextV1(l);
+ }
+ return sum;
+}
+
+function migrateProgressionToV3(){
+ if((state.progressionVersion||1)>=3)return false;
+
+ const oldVersion=state.progressionVersion||1;
+ const oldInfo=levelInfoForVersion(state.xp||0,oldVersion,state.packsOpened||0);
+ const oldLevel=Math.max(1,oldInfo.level);
+
+ // Preserve fractional progress toward the next level where possible.
+ let progress=0;
+ if(oldLevel<200 && !oldInfo.packGate){
+   const oldNeed=oldVersion===2?xpForNextV2(oldLevel):xpForNextV1(oldLevel);
+   progress=oldNeed>0?Math.max(0,Math.min(.999,(oldInfo.current||0)/oldNeed)):0;
+ }
+
+ const newBase=cumulativeXpV3(oldLevel);
+ const newNeed=oldLevel>=200?0:xpForNextV3(oldLevel);
+ state.xp=Math.round(newBase+(newNeed*progress));
+ state.progressionVersion=3;
+ return true;
 }
 
 function levelInfo(xp=state.xp||0){
@@ -644,7 +756,7 @@ function levelInfo(xp=state.xp||0){
  let packGate=false;
  let gateTarget=0;
 
- if(state.progressionVersion===2){
+ if(state.progressionVersion>=2){
    const packs=state.packsOpened||0;
    for(let target=2;target<=10;target++){
      const required=packGateForLevel(target);
@@ -669,7 +781,6 @@ function levelInfo(xp=state.xp||0){
    };
  }
 
- // Recalculate XP progress for the actual visible level.
  let used=0;
  for(let l=1;l<level;l++)used+=xpForNext(l);
  const visibleRem=Math.max(0,Math.floor(xp)-used);
@@ -1075,7 +1186,7 @@ const TUTORIAL_STEPS=[
  {id:'swipe',view:'packsView',target:()=>cardShell,anchor:()=>document.querySelector('.stage-arena'),title:'Swipe Through Your Cards',text:'Swipe each face-up card left, right, or up. Every card you reveal is automatically added to your collection.',hint:'Swipe through the entire pack to continue.',action:true},
  {id:'binder',view:'binderView',target:()=>document.querySelector('[data-view="binderView"]'),title:'Your Binder',text:'Everything you just pulled is saved here. New cards raise your set completion, and 25%, 50%, 75%, and 100% completion milestones award PokéCoins.',hint:null},
  {id:'quests',view:'questsView',target:()=>document.querySelector('[data-view="questsView"]'),title:'Earn Rewards',text:'Daily Quests and Achievements give you XP and PokéCoins as you play. You don’t need to memorize them now — just collect and they’ll progress naturally.',hint:null},
- {id:'progress',view:'profileView',target:()=>unlockList,title:'Level Up & Unlock More',text:'Early levels are paced by packs opened: Lv2 at 5 packs, Lv3 at 10, Lv4 at 15, and Lv5 at 20 for Auto Swipe. Progress then continues through Lv6–9 before Lv10 unlocks at 60 packs with full boxes, the Store, Super Packs, and duplicate selling.',hint:null},
+ {id:'progress',view:'profileView',target:()=>unlockList,title:'Level Up & Unlock More',text:'Early levels are paced by packs opened: Lv2 at 5 packs, Lv3 at 10, Lv4 at 15, and Lv5 at 20 for Auto Swipe. Lv10 unlocks at 60 packs, and higher levels use a much slower XP curve so major milestones stay meaningful.',hint:null},
  {id:'finish',view:'packsView',target:null,title:'You’re Ready!',text:'Complete your binder, earn PokéCoins, level up, and hunt for the rarest cards. Everything else will unlock naturally as you play.',hint:null}
 ];
 let tutorialIndex=0,tutorialActive=false,tutorialTarget=null,tutorialReplay=false;
@@ -1289,7 +1400,7 @@ tutorialSkip?.addEventListener('click',finishTutorial);
 achievementExpand?.addEventListener('click',()=>{achievementsExpanded=!achievementsExpanded;renderAchievements()});
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));openPack.addEventListener('click',()=>{if(tutorialActive&&currentTutorialStep().id==='open'){const count=$('packOpenCount');if(count)count.value='1'}},true);
 openPack.addEventListener('click',ripPack);pullNext.addEventListener('click',()=>dismissCard('left'));skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});[binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
-saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});exportSave.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pokemon-pack-simulator-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)});importSave.addEventListener('change',async()=>{const f=importSave.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.collection)throw new Error();state={...state,...x};for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}if(state.xp==null)state.xp=0;if(state.pokecoins==null)state.pokecoins=0;if(!state.promos)state.promos={};if(!state.setCompletionXp)state.setCompletionXp={};if(!state.binderCoinRewards)state.binderCoinRewards={};if(!state.dailyLogin)state.dailyLogin={lastDate:'',day:0};if(typeof state.tutorialCompleted!=='boolean')state.tutorialCompleted=true;if(typeof state.progressionVersion!=='number')state.progressionVersion=1;state.xpVersion=1;save();refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();alert('Save imported.')}catch(e){alert('That save file could not be read.')}importSave.value=''});resetSave.addEventListener('click',()=>{if(!confirm('Reset the entire binder, stats, daily quests and achievements across all series?'))return;state={profileName:state.profileName||'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:Object.fromEntries(SERIES_ORDER.map(c=>[SETS[c].name,{boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}])),daily:{date:localDayKey(),packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,progressionVersion:2,xpVersion:1};save();neutralSeriesState();renderBinder();renderProfile();updateWelcome()});
+saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});exportSave.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pokemon-pack-simulator-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)});importSave.addEventListener('change',async()=>{const f=importSave.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.collection)throw new Error();state={...state,...x};for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}if(state.xp==null)state.xp=0;if(state.pokecoins==null)state.pokecoins=0;if(!state.promos)state.promos={};if(!state.setCompletionXp)state.setCompletionXp={};if(!state.binderCoinRewards)state.binderCoinRewards={};if(!state.dailyLogin)state.dailyLogin={lastDate:'',day:0};if(typeof state.tutorialCompleted!=='boolean')state.tutorialCompleted=true;if(typeof state.progressionVersion!=='number')state.progressionVersion=1;migrateProgressionToV3();state.xpVersion=1;save();refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();alert('Save imported.')}catch(e){alert('That save file could not be read.')}importSave.value=''});resetSave.addEventListener('click',()=>{if(!confirm('Reset the entire binder, stats, daily quests and achievements across all series?'))return;state={profileName:state.profileName||'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:Object.fromEntries(SERIES_ORDER.map(c=>[SETS[c].name,{boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}])),daily:{date:localDayKey(),packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,progressionVersion:3,xpVersion:1};save();neutralSeriesState();renderBinder();renderProfile();updateWelcome()});
 
 const appShell=$('appShell');let pseudoFullscreen=false,wakeLock=null;const isFullscreenMode=()=>!!document.fullscreenElement||pseudoFullscreen;async function requestWakeLock(){try{if('wakeLock' in navigator&&isFullscreenMode()){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener?.('release',()=>{wakeLock=null})}}catch(e){}}
 async function releaseWakeLock(){try{await wakeLock?.release?.()}catch(e){}wakeLock=null}
@@ -1299,7 +1410,7 @@ soundToggle.addEventListener('click',()=>SoundFX.setEnabled(!SoundFX.enabled));S
 document.addEventListener('pointerdown',e=>{if(!SoundFX.enabled)return;const b=e.target.closest?.('button');if(b&&b!==soundToggle&&!b.disabled)SoundFX.click()},{passive:true});
 fullscreenBtn.addEventListener('click',()=>toggleFullscreen(false));document.addEventListener('fullscreenchange',syncFullscreenState);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&isFullscreenMode())requestWakeLock();else if(document.visibilityState!=='visible')releaseWakeLock()});enterSimulatorBtn.addEventListener('click',()=>{SoundFX.init();entryOverlay.style.display='none';switchView('packsView')});
 
-ensureDaily();claimDailyLogin();neutralSeriesState();renderProfile();updateWelcome();applyFeatureLocks();checkAchievements();switchView('packsView');
+const progressionMigrated=migrateProgressionToV3();if(progressionMigrated)save();ensureDaily();claimDailyLogin();neutralSeriesState();renderProfile();updateWelcome();applyFeatureLocks();checkAchievements();switchView('packsView');
 if(!state.tutorialCompleted&&!hadExistingSave)setTimeout(()=>startTutorial(false),180);
 
 
