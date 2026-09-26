@@ -608,8 +608,36 @@ const DRIVE_FOLDER_KEY='pokemon_pack_drive_folder_id_v1';
 const DRIVE_FILE_KEY='pokemon_pack_drive_file_id_v1';
 const DRIVE_LAST_SYNC_KEY='pokemon_pack_drive_last_sync_v1';
 const DRIVE_LOCAL_UPDATED_KEY='pokemon_pack_drive_local_updated_v1';
+const DRIVE_SESSION_TOKEN_KEY='pokemon_pack_drive_session_token_v1';
+const DRIVE_SESSION_EXPIRY_KEY='pokemon_pack_drive_session_expiry_v1';
 let driveTokenClient=null,driveAccessToken='',driveTokenExpiresAt=0,driveReady=false,driveAutosaveTimer=null,driveSyncBusy=false,driveInitialSyncDone=false;
 
+function loadDriveSessionToken(){
+ try{
+   const token=sessionStorage.getItem(DRIVE_SESSION_TOKEN_KEY)||'';
+   const expiry=Number(sessionStorage.getItem(DRIVE_SESSION_EXPIRY_KEY)||0);
+   if(token&&expiry>Date.now()+5000){driveAccessToken=token;driveTokenExpiresAt=expiry;return true}
+   sessionStorage.removeItem(DRIVE_SESSION_TOKEN_KEY);sessionStorage.removeItem(DRIVE_SESSION_EXPIRY_KEY);
+ }catch(_){}
+ return false;
+}
+function cacheDriveSessionToken(){
+ try{
+   if(driveAccessToken&&driveTokenExpiresAt>Date.now()){sessionStorage.setItem(DRIVE_SESSION_TOKEN_KEY,driveAccessToken);sessionStorage.setItem(DRIVE_SESSION_EXPIRY_KEY,String(driveTokenExpiresAt))}
+ }catch(_){}
+}
+function clearDriveSessionToken(){
+ driveAccessToken='';driveTokenExpiresAt=0;
+ try{sessionStorage.removeItem(DRIVE_SESSION_TOKEN_KEY);sessionStorage.removeItem(DRIVE_SESSION_EXPIRY_KEY)}catch(_){}
+}
+function makeDriveReauthError(message='Google Drive authorization expired. Reconnect required.'){
+ const e=new Error(message);e.code='DRIVE_REAUTH_REQUIRED';return e;
+}
+function isDriveReauthError(e){return e?.code==='DRIVE_REAUTH_REQUIRED'}
+function markDriveReconnectRequired(){
+ clearDriveSessionToken();driveReady=false;driveInitialSyncDone=false;clearTimeout(driveAutosaveTimer);
+ driveSyncBusy=false;setDriveStatus('☁ Reconnect required','warn');setDriveButtonsAfterBusy();
+}
 function setDriveStatus(text,kind=''){
  if(!driveStatus)return;
  driveStatus.textContent=text;
@@ -639,35 +667,40 @@ function initDriveTokenClient(){
    callback:()=>{}
  });
 }
-function requestDriveToken(interactive=false){
+function requestDriveToken(interactive=true){
  return new Promise(async(resolve,reject)=>{
    try{await waitForGoogleIdentity();initDriveTokenClient()}catch(e){return reject(e)}
+   let settled=false;
+   const finishReject=e=>{if(settled)return;settled=true;clearTimeout(timer);reject(e)};
+   const timer=setTimeout(()=>finishReject(new Error('Google sign-in did not complete. Please try again.')),15000);
    driveTokenClient.callback=(resp)=>{
-     if(resp?.error)return reject(new Error(resp.error_description||resp.error));
+     if(settled)return;
+     if(resp?.error)return finishReject(new Error(resp.error_description||resp.error));
      driveAccessToken=resp.access_token||'';
+     if(!driveAccessToken)return finishReject(new Error('Google did not return an access token.'));
      driveTokenExpiresAt=Date.now()+Math.max(30,Number(resp.expires_in||3600)-60)*1000;
-     resolve(driveAccessToken);
+     cacheDriveSessionToken();settled=true;clearTimeout(timer);resolve(driveAccessToken);
    };
-   try{driveTokenClient.requestAccessToken({prompt:interactive?'consent':'none'})}catch(e){reject(e)}
+   try{
+     // Only run this from an explicit user action. Empty prompt lets Google reuse an
+     // existing grant/account when possible without forcing the consent screen every time.
+     driveTokenClient.requestAccessToken({prompt:interactive?'':'none'});
+   }catch(e){finishReject(e)}
  });
 }
 async function ensureDriveToken(interactive=false){
  if(driveAccessToken&&Date.now()<driveTokenExpiresAt)return driveAccessToken;
- return requestDriveToken(interactive);
+ if(!driveAccessToken)loadDriveSessionToken();
+ if(driveAccessToken&&Date.now()<driveTokenExpiresAt)return driveAccessToken;
+ if(interactive)return requestDriveToken(true);
+ throw makeDriveReauthError();
 }
 async function driveFetch(url,opts={},interactive=false){
  let token;
- try{token=await ensureDriveToken(interactive)}catch(e){
-   if(!interactive){driveAccessToken='';driveTokenExpiresAt=0;driveReady=false;setDriveStatus('☁ Reconnect Google Drive','warn');setDriveButtonsAfterBusy();}
-   throw e;
- }
+ try{token=await ensureDriveToken(interactive)}catch(e){if(!interactive||isDriveReauthError(e))markDriveReconnectRequired();throw e}
  const headers=new Headers(opts.headers||{});headers.set('Authorization','Bearer '+token);
  const res=await fetch(url,{...opts,headers});
- if(res.status===401&&!interactive){
-   driveAccessToken='';driveTokenExpiresAt=0;driveReady=false;driveInitialSyncDone=false;
-   setDriveStatus('☁ Reconnect Google Drive','warn');setDriveButtonsAfterBusy();
-   throw new Error('Google Drive reconnect required.');
- }
+ if(res.status===401){markDriveReconnectRequired();throw makeDriveReauthError()}
  if(!res.ok){let msg='Google Drive request failed ('+res.status+')';try{const j=await res.json();msg=j?.error?.message||msg}catch(_){ }throw new Error(msg)}
  return res;
 }
@@ -687,7 +720,8 @@ async function createDriveFolder(){
 async function ensureDriveFolder(){
  let id=localStorage.getItem(DRIVE_FOLDER_KEY)||'';
  if(id){
-   try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,trashed');return id}catch(_){localStorage.removeItem(DRIVE_FOLDER_KEY);id=''}
+   try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,trashed');return id}
+   catch(e){if(isDriveReauthError(e))throw e;localStorage.removeItem(DRIVE_FOLDER_KEY);id=''}
  }
  let folder=await findDriveItem(DRIVE_FOLDER_NAME,'application/vnd.google-apps.folder');
  if(!folder)folder=await createDriveFolder();
@@ -697,7 +731,8 @@ async function ensureDriveSaveFile(createIfMissing=false){
  const folderId=await ensureDriveFolder();
  let id=localStorage.getItem(DRIVE_FILE_KEY)||'';
  if(id){
-   try{const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,name,modifiedTime,trashed');const f=await r.json();if(!f.trashed)return f}catch(_){localStorage.removeItem(DRIVE_FILE_KEY);id=''}
+   try{const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(id)+'?fields=id,name,modifiedTime,trashed');const f=await r.json();if(!f.trashed)return f}
+   catch(e){if(isDriveReauthError(e))throw e;localStorage.removeItem(DRIVE_FILE_KEY);id=''}
  }
  let file=await findDriveItem(DRIVE_SAVE_FILE,'application/json',folderId);
  if(file){localStorage.setItem(DRIVE_FILE_KEY,file.id);return file}
@@ -720,13 +755,15 @@ async function uploadStateToDrive(manual=false){
    const updated=await r.json();
    const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
    setDriveStatus('☁ Synced','ok');return updated;
- }catch(e){setDriveStatus('☁ Save failed · '+e.message,'warn');return false}
+ }catch(e){if(isDriveReauthError(e)){markDriveReconnectRequired();return false}setDriveStatus('☁ Save failed · '+e.message,'warn');return false}
  finally{driveSyncBusy=false;setDriveButtonsAfterBusy()}
 }
 function setDriveButtonsAfterBusy(){
+ const remembered=localStorage.getItem(DRIVE_CONNECTED_KEY)==='1';
  if(driveSave)driveSave.disabled=!driveReady;
  if(driveLoad)driveLoad.disabled=!driveReady;
- if(driveDisconnect)driveDisconnect.disabled=!driveReady;
+ if(driveDisconnect)driveDisconnect.disabled=!driveReady&&!remembered;
+ if(driveConnect){driveConnect.disabled=!!driveReady||driveSyncBusy;driveConnect.textContent=driveReady?'Google Drive Connected':remembered?'Reconnect Google Drive':'Connect Google Drive'}
 }
 async function downloadStateFromDrive(manual=false){
  if(!driveReady||driveSyncBusy)return false;
@@ -744,7 +781,7 @@ async function downloadStateFromDrive(manual=false){
    const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
    refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();
    setDriveStatus('☁ Synced','ok');return true;
- }catch(e){setDriveStatus('☁ Load failed · '+e.message,'warn');return false}
+ }catch(e){if(isDriveReauthError(e)){markDriveReconnectRequired();return false}setDriveStatus('☁ Load failed · '+e.message,'warn');return false}
  finally{driveSyncBusy=false;setDriveButtonsAfterBusy()}
 }
 function scheduleDriveAutosave(){
@@ -756,38 +793,47 @@ async function prepareDriveAfterAuth({firstConnect=false}={}){
  driveReady=true;
  localStorage.setItem(DRIVE_CONNECTED_KEY,'1');
  setDriveStatus('☁ Connected · checking cloud save…','sync');
-
  const remote=await ensureDriveSaveFile(false);
-
- // Google Drive is the preferred source whenever a cloud save already exists.
- // This keeps all devices loading the same cloud progress automatically.
  if(remote){
    const loaded=await downloadStateFromDrive(false);
    driveInitialSyncDone=loaded===true;
    if(loaded===true)setDriveStatus('☁ Cloud save loaded · Synced','ok');
    return;
  }
-
- // No cloud save exists yet: seed Drive with the current local save.
  const uploaded=await uploadStateToDrive(false);
  driveInitialSyncDone=!!uploaded;
  if(uploaded)setDriveStatus('☁ Cloud save created · Synced','ok');
 }
 async function connectGoogleDrive(interactive=true){
  if(driveSyncBusy)return;
- driveSyncBusy=true;setDriveStatus(interactive?'☁ Connecting…':'☁ Reconnecting…','sync');
- try{await ensureDriveToken(interactive);driveSyncBusy=false;await prepareDriveAfterAuth({firstConnect:interactive})}
- catch(e){driveReady=false;driveSyncBusy=false;setDriveStatus(interactive?'☁ Connection failed':'☁ Reconnect when needed',interactive?'warn':'');setDriveButtonsAfterBusy()}
+ driveSyncBusy=true;setDriveStatus('☁ Connecting…','sync');
+ try{
+   await ensureDriveToken(true);
+   driveSyncBusy=false;
+   await prepareDriveAfterAuth({firstConnect:interactive});
+ }catch(e){
+   driveReady=false;driveInitialSyncDone=false;driveSyncBusy=false;
+   if(isDriveReauthError(e))setDriveStatus('☁ Reconnect required','warn');
+   else setDriveStatus('☁ Connection failed · '+(e?.message||'Try again'),'warn');
+   setDriveButtonsAfterBusy();
+ }
 }
 function disconnectGoogleDrive(){
- if(driveAccessToken&&window.google?.accounts?.oauth2){try{google.accounts.oauth2.revoke(driveAccessToken,()=>{})}catch(_){}}
- driveAccessToken='';driveTokenExpiresAt=0;driveReady=false;driveInitialSyncDone=false;clearTimeout(driveAutosaveTimer);
+ if(driveAccessToken&&window.google?.accounts?.oauth2){try{google.accounts.oauth2.revoke(driveAccessToken,()=>{})}catch(_){} }
+ clearDriveSessionToken();driveReady=false;driveInitialSyncDone=false;driveSyncBusy=false;clearTimeout(driveAutosaveTimer);
  localStorage.removeItem(DRIVE_CONNECTED_KEY);localStorage.removeItem(DRIVE_FOLDER_KEY);localStorage.removeItem(DRIVE_FILE_KEY);localStorage.removeItem(DRIVE_LAST_SYNC_KEY);
  setDriveStatus('☁ Not connected');setDriveButtonsAfterBusy();
 }
 async function autoReconnectGoogleDrive(){
- if(localStorage.getItem(DRIVE_CONNECTED_KEY)!=='1'){setDriveStatus('☁ Not connected');return}
- try{await connectGoogleDrive(false)}catch(_){setDriveStatus('☁ Reconnect when needed')}
+ const remembered=localStorage.getItem(DRIVE_CONNECTED_KEY)==='1';
+ if(!remembered){setDriveStatus('☁ Not connected');return}
+ // Never launch Google OAuth automatically. Reuse only a still-valid token from this tab/session.
+ if(loadDriveSessionToken()){
+   try{driveReady=true;await prepareDriveAfterAuth({firstConnect:false});return}
+   catch(e){if(!isDriveReauthError(e))setDriveStatus('☁ Reconnect required','warn')}
+ }
+ driveReady=false;driveInitialSyncDone=false;driveSyncBusy=false;
+ setDriveStatus('☁ Reconnect required','warn');setDriveButtonsAfterBusy();
 }
 
 let CURRENT_SERIES='',cards=[],pools={},box=[],selected=0,currentPack=null,currentIndex=-1,busy=false,cardShown=false,sessionPulled=0,sessionBig=0,dialogCard=null,openQueue=[],queueIndex=0,boxCounted=false,autoRunning=false,autoCancel=false,autoPauseCardId=null,currentBoxGod=false,achievementFilter='ALL',batchRemainingTotal=0,batchUnlimited=false,achievementsExpanded=false,superPackQueue=[];
