@@ -281,6 +281,36 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 .super-pack-card[data-series="M4"]>img{transform:scale(1.30);transform-origin:center center}
 @media(max-width:560px){.header-economy-chip{min-height:38px;padding:8px 12px!important;font-size:13px!important}.header-economy-chip #headerLevel,.header-economy-chip #headerCoins{font-size:14px}#storePreviewDialog img{max-width:88vw;max-height:78vh}}
 
+
+
+/* 2026-09-27 Binder upgrade: Promo Binder + 3x3 showcase binder */
+.binder-viewbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+.binder-mode-switch{display:flex;gap:7px;flex-wrap:wrap}
+.binder-mode-btn.active{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 1px rgba(255,213,74,.14) inset}
+#openBinderBook{white-space:nowrap}
+.promo-binder-slot .slot-meta{color:#ffe889}
+#binderBookDialog{width:min(980px,97vw);max-width:97vw;padding:0;background:#0c0f15;border:1px solid #3a4356;overflow:hidden}
+#binderBookDialog::backdrop{background:rgba(0,0,0,.88);backdrop-filter:blur(5px)}
+.binder-book-shell{padding:16px;min-height:min(860px,90vh);display:flex;flex-direction:column;gap:12px;background:radial-gradient(circle at top,rgba(54,44,27,.32),rgba(12,15,21,.98) 44%)}
+.binder-book-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-right:44px}
+.binder-book-title{font-size:20px;font-weight:950}.binder-book-status{font-size:11px;color:var(--muted);margin-top:3px}
+.binder-book-page{position:relative;flex:1;min-height:0;border:1px solid rgba(255,213,74,.24);border-radius:18px;padding:13px;background:linear-gradient(135deg,#17130f,#11151d 45%,#0c0f15);box-shadow:inset 0 0 0 2px rgba(0,0,0,.24),0 18px 45px rgba(0,0,0,.38);perspective:1200px;overflow:hidden;touch-action:pan-y}
+.binder-book-page.flip-next{animation:binderFlipNext .28s ease}.binder-book-page.flip-prev{animation:binderFlipPrev .28s ease}
+@keyframes binderFlipNext{0%{opacity:.2;transform:rotateY(-18deg) translateX(18px)}100%{opacity:1;transform:rotateY(0) translateX(0)}}
+@keyframes binderFlipPrev{0%{opacity:.2;transform:rotateY(18deg) translateX(-18px)}100%{opacity:1;transform:rotateY(0) translateX(0)}}
+.binder-book-grid{height:100%;min-height:610px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:10px}
+.binder-pocket{position:relative;min-width:0;min-height:0;border:1px solid rgba(255,255,255,.13);border-radius:13px;padding:7px;background:linear-gradient(155deg,rgba(52,55,65,.72),rgba(18,21,29,.94));box-shadow:inset 0 0 0 2px rgba(255,255,255,.025);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;color:var(--text)}
+button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default;color:var(--muted);opacity:.78}
+.binder-pocket:before{content:"";position:absolute;inset:5px;border:1px solid rgba(255,255,255,.06);border-radius:9px;pointer-events:none}
+.binder-pocket img{display:block;height:calc(100% - 29px);max-height:100%;width:auto;max-width:100%;aspect-ratio:744/1040;object-fit:contain;border-radius:7px;background:#090b10;box-shadow:0 5px 14px rgba(0,0,0,.35)}
+.binder-pocket.missing img{filter:grayscale(1);opacity:.055}.binder-pocket.missing .binder-pocket-name{color:#737b89}
+.binder-pocket-question{position:absolute;inset:8px;display:grid;place-items:center;font-size:34px;font-weight:950;color:#626b7c;pointer-events:none}
+.binder-pocket-name{width:100%;font-size:9px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;margin-top:5px;z-index:2}
+.binder-pocket-meta{font-size:8px;color:var(--muted);text-align:center;z-index:2}.binder-pocket-qty{position:absolute;right:10px;top:10px;z-index:3;padding:3px 6px;border-radius:999px;background:rgba(8,10,14,.88);border:1px solid var(--line);font-size:9px;font-weight:950}
+.binder-pocket.empty-pocket{opacity:.2;background:#0a0c11}
+.binder-book-controls{display:grid;grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr);gap:9px;align-items:center}.binder-book-controls #binderBookPrev{justify-self:start}.binder-book-controls #binderBookNext{justify-self:end}.binder-book-page-label{font-size:12px;font-weight:900;color:var(--accent);text-align:center;min-width:110px}
+@media(max-width:700px){#binderBookDialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0}.binder-book-shell{height:100dvh;min-height:0;padding:10px 8px calc(10px + env(safe-area-inset-bottom));gap:8px}.binder-book-head{padding-right:40px}.binder-book-title{font-size:16px}.binder-book-page{padding:7px;border-radius:13px}.binder-book-grid{min-height:0;gap:5px}.binder-pocket{padding:4px;border-radius:9px}.binder-pocket img{height:calc(100% - 23px);border-radius:5px}.binder-pocket-name{font-size:7px;margin-top:3px}.binder-pocket-meta{font-size:6px}.binder-pocket-question{font-size:24px}.binder-book-controls{grid-template-columns:1fr auto 1fr;gap:5px}.binder-book-controls button{font-size:11px;padding:8px;min-height:38px}.binder-book-page-label{font-size:10px;min-width:82px}}
+
 </style>
 </head>
 
@@ -290,7 +320,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · LIFETIME STATS + STORE PREVIEW · 2026-09-26</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · PROMO + 3×3 BINDER · SERIES STATS · 2026-09-27</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">Binder — / —</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="level-chip header-economy-chip">Lv <span id="headerLevel">1</span><span class="header-coin-sep">·</span><span class="header-coin">🪙 <span id="headerCoins">0</span></span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="musicToggle" type="button" aria-pressed="true">🎵 Music On</button><label class="secondary" style="display:inline-flex;align-items:center;gap:8px;padding-right:10px"><span style="font-weight:800">Vol</span><input id="musicVolume" type="range" min="0" max="100" step="1" value="40" style="width:110px"></label><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button></div>
@@ -325,10 +355,11 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 
  <main id="binderView" class="view" hidden>
   <section class="panel">
-   <div class="section-head"><div><h2>My Collection / Binder</h2><div class="sub">Shows the currently selected series. Cards are saved automatically on this device.</div></div><div class="stat"><div class="k">Completion</div><div class="v" id="completionText">0 / 120</div></div></div>
-   <div class="progress-wrap"><div class="progress-row"><span>Set completion</span><strong id="completionPct">0%</strong></div><div class="progress"><div id="completionBar"></div></div></div>
+   <div class="section-head"><div><h2>My Collection / Binder</h2><div class="sub" id="binderDescription">Shows the currently selected series. Cards are saved automatically on this device.</div></div><div class="stat"><div class="k">Completion</div><div class="v" id="completionText">0 / 0</div></div></div>
+   <div class="binder-viewbar"><div class="binder-mode-switch"><button class="secondary binder-mode-btn active" id="seriesBinderBtn" type="button">Series Binder</button><button class="secondary binder-mode-btn" id="promoBinderBtn" type="button">Promo Binder</button></div><button class="primary" id="openBinderBook" type="button">📖 Open Binder</button></div>
+   <div class="progress-wrap"><div class="progress-row"><span id="binderProgressLabel">Set completion</span><strong id="completionPct">0%</strong></div><div class="progress"><div id="completionBar"></div></div></div>
    <div class="toolbar"><input id="binderSearch" placeholder="Search card…"><select id="binderRarity"><option value="ALL">All rarities</option><option>BASE</option><option>C</option><option>U</option><option>R</option><option>RR</option><option>AR</option><option>SR</option><option>MA</option><option>SAR</option><option>MUR</option></select><select id="binderOwned"><option value="ALL">Full binder</option><option value="OWNED">Owned only</option><option value="MISSING">Missing only</option></select><select id="binderSort"><option value="NO">Card number</option><option value="RARITY">Rarity</option><option value="COUNT">Duplicates</option><option value="RECENT">Recently pulled</option></select><button class="secondary" id="sellAllDuplicates" type="button">Sell Duplicates · Lv 10</button></div>
-   <div class="sell-note">Duplicate selling always keeps at least one copy of every card.</div>
+   <div class="sell-note" id="binderSellNote">Duplicate selling always keeps at least one copy of every expansion card.</div>
    <div id="binderGrid" class="binder-grid"></div>
   </section>
  </main>
@@ -393,7 +424,7 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
   </section>
  </main>
 
- <div class="footer-note" id="footerNote">Build: Lifetime Stats + Store Preview 2026-09-26 · Background music: “Menu Theme” by tamesu, CC0 via OpenGameArt. · Multi-series simulator across Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Munikis Zero, Ninja Spinner, Abyss Eye, and Storm Emeralda. Standard boxes are simulated as 30 packs with 5 cards each. Store Super Packs now open in fixed rarity order, with 7 cards for most series and 10 cards for MEGA Dream ex. Premium promo cards are exclusive store rewards and do not appear in normal packs. Simulated collation is not an official Pokémon Company guarantee.</div>
+ <div class="footer-note" id="footerNote">Build: Promo + 3×3 Binder + Series Stats 2026-09-27 · Background music: “Menu Theme” by tamesu, CC0 via OpenGameArt. · Multi-series simulator across Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Munikis Zero, Ninja Spinner, Abyss Eye, and Storm Emeralda. Standard boxes are simulated as 30 packs with 5 cards each. Store Super Packs now open in fixed rarity order, with 7 cards for most series and 10 cards for MEGA Dream ex. Premium promo cards are exclusive store rewards and do not appear in normal packs. Simulated collation is not an official Pokémon Company guarantee.</div>
 </div></div>
 
 <div id="tutorialOverlay" class="tutorial-overlay" hidden aria-modal="true" role="dialog" aria-label="Simulator tutorial">
@@ -423,11 +454,19 @@ box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
 </dialog>
 
 <dialog id="storePreviewDialog" aria-label="Store image preview"><button id="storePreviewClose" class="close-x" type="button" aria-label="Close preview">×</button><div class="store-preview-inner"><img id="storePreviewImg" alt=""><div id="storePreviewTitle"></div></div></dialog>
+<dialog id="binderBookDialog" aria-label="Binder viewer">
+ <button id="binderBookClose" class="close-x" type="button" aria-label="Close binder">×</button>
+ <div class="binder-book-shell">
+  <div class="binder-book-head"><div><div class="binder-book-title" id="binderBookTitle">Binder</div><div class="binder-book-status" id="binderBookStatus"></div></div></div>
+  <div id="binderBookPage" class="binder-book-page"><div id="binderBookGrid" class="binder-book-grid"></div></div>
+  <div class="binder-book-controls"><button class="secondary" id="binderBookPrev" type="button">← Previous</button><div class="binder-book-page-label" id="binderBookPageLabel">Page 1 / 1</div><button class="secondary" id="binderBookNext" type="button">Next →</button></div>
+ </div>
+</dialog>
 <dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
-const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','musicToggle','musicVolume','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','driveSave','driveLoad','driveDisconnect','storePreviewDialog','storePreviewClose','storePreviewImg','storePreviewTitle'].forEach(id=>E[id]=$(id));
-const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,musicToggle,musicVolume,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,driveSave,driveLoad,driveDisconnect,storePreviewDialog,storePreviewClose,storePreviewImg,storePreviewTitle}=E;
+const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','musicToggle','musicVolume','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','driveSave','driveLoad','driveDisconnect','storePreviewDialog','storePreviewClose','storePreviewImg','storePreviewTitle','binderDescription','binderProgressLabel','binderSellNote','seriesBinderBtn','promoBinderBtn','openBinderBook','binderBookDialog','binderBookClose','binderBookTitle','binderBookStatus','binderBookPage','binderBookGrid','binderBookPrev','binderBookNext','binderBookPageLabel'].forEach(id=>E[id]=$(id));
+const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,musicToggle,musicVolume,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,driveSave,driveLoad,driveDisconnect,storePreviewDialog,storePreviewClose,storePreviewImg,storePreviewTitle,binderDescription,binderProgressLabel,binderSellNote,seriesBinderBtn,promoBinderBtn,openBinderBook,binderBookDialog,binderBookClose,binderBookTitle,binderBookStatus,binderBookPage,binderBookGrid,binderBookPrev,binderBookNext,binderBookPageLabel}=E;
 // --- Built-in sound engine (Web Audio API; no external audio files required) ---
 const SoundFX=(()=>{
  let ctx=null,master=null;
@@ -592,7 +631,7 @@ if(!state.seriesStats||typeof state.seriesStats!=='object')state.seriesStats={};
 if(!state.achievements)state.achievements={};if(!state.achievementStats)state.achievementStats={maxBatch:0,godPacks:0};
 if(!state.promos)state.promos={};if(!state.setCompletionXp)state.setCompletionXp={};if(state.pokecoins==null)state.pokecoins=0;if(state.xp==null||!state.xpVersion){const existingUnique=Object.values(state.collection||{}).filter(v=>v>0).length;state.xp=(state.packsOpened||0)*8+existingUnique*15+Object.keys(state.achievements||{}).length*200+(state.achievementStats?.godPacks||0)*1000;state.xpVersion=1;}
 if(Object.keys(state.collection||{}).some(k=>!k.includes(':'))){const m={};for(const [k,v] of Object.entries(state.collection))m[k.includes(':')?k:`M4:${String(k).padStart(3,'0')}`]=(m[k.includes(':')?k:`M4:${String(k).padStart(3,'0')}`]||0)+v;state.collection=m}
-for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}};if(!state.seriesStats[s.name].rarities)state.seriesStats[s.name].rarities={}}
+for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}};const x=state.seriesStats[s.name];for(const k of ['boxes','packs','cards','bigHits'])if(!Number.isFinite(Number(x[k])))x[k]=0;else x[k]=Number(x[k]);if(!x.rarities||typeof x.rarities!=='object')x.rarities={}}
 if(!state.binderCoinRewards)state.binderCoinRewards={};if(!state.dailyLogin)state.dailyLogin={lastDate:'',day:0};
 const save=()=>{try{localStorage.setItem(STORAGE,JSON.stringify(state));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(Date.now()));scheduleDriveAutosave();return true}catch(e){return false}};
 
@@ -837,6 +876,7 @@ async function autoReconnectGoogleDrive(){
 }
 
 let CURRENT_SERIES='',cards=[],pools={},box=[],selected=0,currentPack=null,currentIndex=-1,busy=false,cardShown=false,sessionPulled=0,sessionBig=0,dialogCard=null,openQueue=[],queueIndex=0,boxCounted=false,autoRunning=false,autoCancel=false,autoPauseCardId=null,currentBoxGod=false,achievementFilter='ALL',batchRemainingTotal=0,batchUnlimited=false,achievementsExpanded=false,superPackQueue=[];
+let binderMode='series',binderBookPageIndex=0,binderBookAnimating=false;
 
 function xpForNextV1(level){if(level>=200)return 0;if(level<=20)return 80+8*level;if(level<=50)return 220+14*(level-20);if(level<=100)return 650+25*(level-50);if(level<=150)return 1950+40*(level-100);return 4000+60*(level-150)}
 function xpForNextV2(level){
@@ -1050,7 +1090,7 @@ function applyFeatureLocks(){
  else if(!autoRunning&&skipPack.textContent.startsWith('Autoswipe'))skipPack.textContent='Autoswipe';
  const storeBtn=document.querySelector('[data-view="storeView"]');
  if(storeBtn){storeBtn.disabled=!store;storeBtn.title=store?'':'Unlocks at Level 10'}
- if(sellAllDuplicates){sellAllDuplicates.disabled=!sell;sellAllDuplicates.textContent=sell?'Sell All Duplicates':'Sell Duplicates · Lv 10'}
+ if(sellAllDuplicates){sellAllDuplicates.disabled=!sell||binderMode==='promo';sellAllDuplicates.textContent=binderMode==='promo'?'Sell Duplicates · Series Only':(sell?'Sell All Duplicates':'Sell Duplicates · Lv 10')}
  if(sellDuplicate){sellDuplicate.disabled=!sell||(dialogCard?countOwned(dialogCard)<=1:true);sellDuplicate.textContent=sell?'Sell 1 Duplicate':'Sell Duplicate · Lv 10'}
  if(storeLocked)storeLocked.hidden=store;
  if(storeContent)storeContent.hidden=!store
@@ -1086,7 +1126,7 @@ function neutralSeriesState(){
  autoCancel=true;autoRunning=false;batchUnlimited=false;batchRemainingTotal=0;CURRENT_SERIES='';cards=[];pools={};box=[];selected=0;currentPack=null;currentIndex=-1;
  seriesSelect.value='';seriesSubtitle.textContent='Choose a series to start opening packs';setCardCount.textContent='Binder — / —';
  boosterWrap.classList.add('hidden');cardShell.hidden=true;emptyState.hidden=false;emptyState.innerHTML='<div class="empty-icon">🎴</div><strong>Select a series</strong><div class="helper">Choose an expansion above to create a booster box and begin.</div>';
- packGrid.innerHTML='';packsLeft.textContent=state.boxesOpened||0;cardsPulled.textContent=state.packsOpened||0;uniqueCards.textContent='— / —';bigHits.textContent=state.bigHits||0;updateSeriesProgressUI();packStatus.textContent='No series selected.';
+ packGrid.innerHTML='';packsLeft.textContent='—';cardsPulled.textContent='—';uniqueCards.textContent='— / —';bigHits.textContent='—';updateSeriesProgressUI();packStatus.textContent='No series selected.';
  packOpenCount.innerHTML='<option>Select series first</option>';packOpenCount.disabled=true;autoStopRarity.innerHTML='<option>No auto-stop</option>';autoStopRarity.disabled=true;openPack.textContent='Open Pack';openPack.disabled=true;pullNext.disabled=true;skipPack.disabled=true;newBox.disabled=true;
 }
 
@@ -1148,7 +1188,14 @@ function updatePrimaryActionButton(){
  openPack.disabled=!!busy||!!cardTransitionLocked||!box.length||!!box[selected]?.opened||box.every?.(p=>p.opened);
 }
 function renderPacks(){packGrid.innerHTML=box.map((p,i)=>`<button class="pack-btn ${p.opened?'opened':''} ${i===selected?'selected':''}" data-i="${i}" ${p.opened?'disabled':''}>${i+1}</button>`).join('');packGrid.querySelectorAll('.pack-btn:not(:disabled)').forEach(b=>b.addEventListener('click',()=>{if(currentPack||autoRunning)return;selected=+b.dataset.i;renderPacks();resetStage()}))}
-function renderPackStats(){packsLeft.textContent=state.boxesOpened||0;cardsPulled.textContent=state.packsOpened||0;uniqueCards.textContent=CURRENT_SERIES?`${uniqueCount(CURRENT_SERIES)} / ${ALL_CARDS[CURRENT_SERIES]?.length||0}`:'— / —';bigHits.textContent=state.bigHits||0;updateSeriesProgressUI()}
+function renderPackStats(){
+ const ss=CURRENT_SERIES?(state.seriesStats[SETS[CURRENT_SERIES]?.name]||{}):null;
+ packsLeft.textContent=ss?(ss.boxes||0):'—';
+ cardsPulled.textContent=ss?(ss.packs||0):'—';
+ uniqueCards.textContent=CURRENT_SERIES?`${uniqueCount(CURRENT_SERIES)} / ${ALL_CARDS[CURRENT_SERIES]?.length||0}`:'— / —';
+ bigHits.textContent=ss?(ss.bigHits||0):'—';
+ updateSeriesProgressUI()
+}
 function findNextUnopened(from=0){for(let k=0;k<box.length;k++){const i=(from+k)%box.length;if(!box[i].opened)return i}return -1}
 function recordPackOpened(p){if(!boxCounted){boxCounted=true;state.boxesOpened++;state.seriesStats[currentSet().name].boxes++;}p.opened=true;state.packsOpened++;grantXP(8,'Pack opened');const ss=state.seriesStats[currentSet().name];ss.packs++;ensureDaily();state.daily.packs++;state.daily.seriesPacks[CURRENT_SERIES]=(state.daily.seriesPacks[CURRENT_SERIES]||0)+1;save();renderPackStats();checkAchievements()}
 function parseOpenSelection(){const raw=String(packOpenCount.value||'PACK:1');if(raw==='UNLIMITED')return {kind:'UNLIMITED',count:Infinity,totalPacks:Infinity};const [kind,numStr]=raw.split(':');const n=Math.max(1,Number(numStr)||1);return {kind,count:n,totalPacks:kind==='BOX'?n*currentSet().packsPerBox:n}}
@@ -1611,7 +1658,69 @@ function buyPromo(id){
 function sellOneDuplicate(c){if(getLevel()<10||!c)return;const n=countOwned(c);if(n<=1)return;const value=SELL_VALUE[c.rarity]||1;state.collection[c.id]=n-1;state.pokecoins=(state.pokecoins||0)+value;SoundFX.coin(1);save();modalOwned.textContent=`Owned: ${n-1} cop${n-1===1?'y':'ies'}`;renderBinder();renderProfile();applyFeatureLocks()}
 function sellAllDuplicateCards(){if(getLevel()<10)return;let qty=0,coins=0;for(const [id,n] of Object.entries(state.collection)){if(n<=1)continue;const c=BY_ID[id];if(!c)continue;const extra=n-1;qty+=extra;coins+=extra*(SELL_VALUE[c.rarity]||1)}if(!qty){alert('You do not have any duplicates to sell.');return}if(!confirm(`Sell ${qty} duplicate card${qty===1?'':'s'} for ${coins} PokéCoins? One copy of every card will be kept.`))return;for(const [id,n] of Object.entries(state.collection))if(n>1&&BY_ID[id])state.collection[id]=1;state.pokecoins=(state.pokecoins||0)+coins;SoundFX.coin(Math.min(4,qty));save();renderBinder();renderProfile();renderStore();showLevelToast(`🪙 +${coins} PokéCoins`)}
 
-function renderBinder(){if(!CURRENT_SERIES){binderGrid.innerHTML='<div class="sub">Select a series in the Packs tab to view its binder.</div>';completionText.textContent='—';completionPct.textContent='0%';completionBar.style.width='0%';return}const q=binderSearch.value.trim().toLowerCase(),rf=binderRarity.value,of=binderOwned.value,sort=binderSort.value;let list=cards.filter(c=>(rf==='ALL'||c.rarity===rf)&&(!q||(c.name+' '+c.no).toLowerCase().includes(q)));if(of==='OWNED')list=list.filter(c=>countOwned(c)>0);if(of==='MISSING')list=list.filter(c=>countOwned(c)===0);if(sort==='RARITY')list.sort((a,b)=>(RANK[b.rarity]||0)-(RANK[a.rarity]||0)||a.no.localeCompare(b.no));if(sort==='COUNT')list.sort((a,b)=>countOwned(b)-countOwned(a)||a.no.localeCompare(b.no));if(sort==='RECENT'){const pos=Object.fromEntries(state.recent.map((id,i)=>[id,i]));list.sort((a,b)=>(pos[a.id]??9999)-(pos[b.id]??9999))}binderGrid.innerHTML='';for(const c of list){const n=countOwned(c),d=document.createElement('button');d.type='button';d.className=`slot ${n?'owned':'missing'}`;d.innerHTML=`<img alt=""><div class="slot-name">${esc(c.name)}</div><div class="slot-meta">${c.no} · ${c.rarity}</div>${n?`<div class="qty">×${n}</div>`:''}`;setImg(d.querySelector('img'),c);d.addEventListener('click',()=>openCard(c));binderGrid.appendChild(d)}const u=uniqueCount(CURRENT_SERIES),pct=cards.length?Math.round(u/cards.length*1000)/10:0;completionText.textContent=`${u} / ${cards.length}`;completionPct.textContent=`${pct}%`;completionBar.style.width=pct+'%'}
+function setBinderMode(mode){
+ binderMode=mode==='promo'?'promo':'series';
+ binderBookPageIndex=0;
+ if(binderSearch)binderSearch.value='';
+ if(binderOwned)binderOwned.value='ALL';
+ renderBinder();
+}
+function promoOwnedCount(){return PROMOS.filter(p=>!!state.promos[p.id]).length}
+function renderBinder(){
+ const promoMode=binderMode==='promo';
+ seriesBinderBtn?.classList.toggle('active',!promoMode);promoBinderBtn?.classList.toggle('active',promoMode);
+ if(binderRarity)binderRarity.disabled=promoMode;
+ if(binderSort)binderSort.disabled=promoMode;
+ if(binderProgressLabel)binderProgressLabel.textContent=promoMode?'Promo completion':'Set completion';
+ if(binderDescription)binderDescription.textContent=promoMode?'Premium promo cards purchased from the PokéCoin Store. Promo completion is separate from expansion completion.':'Shows the currently selected series. Cards are saved automatically on this device.';
+ if(binderSellNote)binderSellNote.textContent=promoMode?'Premium promo cards are kept separately and are not sold as duplicates.':'Duplicate selling always keeps at least one copy of every expansion card.';
+ if(openBinderBook)openBinderBook.disabled=promoMode?PROMOS.length===0:!CURRENT_SERIES;
+ if(sellAllDuplicates){sellAllDuplicates.disabled=promoMode||getLevel()<10;sellAllDuplicates.textContent=promoMode?'Sell Duplicates · Series Only':(getLevel()>=10?'Sell Duplicates':'Sell Duplicates · Lv 10')}
+ const q=(binderSearch?.value||'').trim().toLowerCase(),of=binderOwned?.value||'ALL';
+ if(promoMode){
+   let list=PROMOS.filter(p=>!q||(p.name+' '+p.no).toLowerCase().includes(q));
+   if(of==='OWNED')list=list.filter(p=>!!state.promos[p.id]);
+   if(of==='MISSING')list=list.filter(p=>!state.promos[p.id]);
+   binderGrid.innerHTML='';
+   for(const p of list){
+     const owned=!!state.promos[p.id],d=document.createElement('button');d.type='button';d.className=`slot promo-binder-slot ${owned?'owned':'missing'}`;
+     d.innerHTML=`<img src="${promoPlaceholder(p)}" alt="${esc(p.name)}"><div class="slot-name">${esc(p.name)}</div><div class="slot-meta">${esc(p.no)} · Premium Promo</div>${owned?'<div class="qty">Owned</div>':''}`;
+     d.addEventListener('click',()=>openStorePreview(promoPlaceholder(p),`${p.name} · ${p.no} · Premium Promo`));binderGrid.appendChild(d)
+   }
+   if(!list.length)binderGrid.innerHTML='<div class="sub">No promo cards match this filter.</div>';
+   const u=promoOwnedCount(),total=PROMOS.length,pct=total?Math.round(u/total*1000)/10:0;
+   completionText.textContent=`${u} / ${total}`;completionPct.textContent=`${pct}%`;completionBar.style.width=pct+'%';return
+ }
+ if(!CURRENT_SERIES){binderGrid.innerHTML='<div class="sub">Select a series in the Packs tab to view its binder, or switch to Promo Binder.</div>';completionText.textContent='—';completionPct.textContent='0%';completionBar.style.width='0%';return}
+ const rf=binderRarity.value,sort=binderSort.value;let list=cards.filter(c=>(rf==='ALL'||c.rarity===rf)&&(!q||(c.name+' '+c.no).toLowerCase().includes(q)));
+ if(of==='OWNED')list=list.filter(c=>countOwned(c)>0);if(of==='MISSING')list=list.filter(c=>countOwned(c)===0);
+ if(sort==='RARITY')list.sort((a,b)=>(RANK[b.rarity]||0)-(RANK[a.rarity]||0)||a.no.localeCompare(b.no));if(sort==='COUNT')list.sort((a,b)=>countOwned(b)-countOwned(a)||a.no.localeCompare(b.no));if(sort==='RECENT'){const pos=Object.fromEntries(state.recent.map((id,i)=>[id,i]));list.sort((a,b)=>(pos[a.id]??9999)-(pos[b.id]??9999))}
+ binderGrid.innerHTML='';for(const c of list){const n=countOwned(c),d=document.createElement('button');d.type='button';d.className=`slot ${n?'owned':'missing'}`;d.innerHTML=`<img alt=""><div class="slot-name">${esc(c.name)}</div><div class="slot-meta">${c.no} · ${c.rarity}</div>${n?`<div class="qty">×${n}</div>`:''}`;setImg(d.querySelector('img'),c);d.addEventListener('click',()=>openCard(c));binderGrid.appendChild(d)}const u=uniqueCount(CURRENT_SERIES),pct=cards.length?Math.round(u/cards.length*1000)/10:0;completionText.textContent=`${u} / ${cards.length}`;completionPct.textContent=`${pct}%`;completionBar.style.width=pct+'%'
+}
+function activeBinderBookItems(){return binderMode==='promo'?PROMOS:(CURRENT_SERIES?(ALL_CARDS[CURRENT_SERIES]||[]):[])}
+function binderBookOwned(item){return binderMode==='promo'?!!state.promos[item.id]:countOwned(item)>0}
+function binderBookOpenItem(item){if(!item||!binderBookOwned(item))return;if(binderMode==='promo')openStorePreview(promoPlaceholder(item),`${item.name} · ${item.no} · Premium Promo`);else openCard(item)}
+function renderBinderBook(direction=0){
+ if(!binderBookGrid)return;const items=activeBinderBookItems(),totalPages=Math.max(1,Math.ceil(items.length/9));binderBookPageIndex=Math.max(0,Math.min(totalPages-1,binderBookPageIndex));
+ const start=binderBookPageIndex*9,pageItems=items.slice(start,start+9),ownedTotal=items.filter(binderBookOwned).length;
+ binderBookTitle.textContent=binderMode==='promo'?'Premium Promo Binder':(CURRENT_SERIES?`${SETS[CURRENT_SERIES].name} Binder`:'Binder');
+ binderBookStatus.textContent=`${ownedTotal} / ${items.length} collected · 9 pockets per page`;
+ binderBookPageLabel.textContent=`Page ${binderBookPageIndex+1} / ${totalPages}`;binderBookPrev.disabled=binderBookPageIndex<=0;binderBookNext.disabled=binderBookPageIndex>=totalPages-1;
+ binderBookGrid.innerHTML='';
+ for(let i=0;i<9;i++){
+   const item=pageItems[i];if(!item){const blank=document.createElement('div');blank.className='binder-pocket empty-pocket';binderBookGrid.appendChild(blank);continue}
+   const owned=binderBookOwned(item),p=document.createElement('button');p.type='button';p.className=`binder-pocket ${owned?'owned':'missing'}`;p.disabled=!owned;
+   const img=document.createElement('img');img.alt=owned?item.name:'Missing card';if(binderMode==='promo')img.src=promoPlaceholder(item);else setImg(img,item);p.appendChild(img);
+   if(!owned){const q=document.createElement('div');q.className='binder-pocket-question';q.textContent='?';p.appendChild(q)}
+   const nm=document.createElement('div');nm.className='binder-pocket-name';nm.textContent=item.name;p.appendChild(nm);
+   const meta=document.createElement('div');meta.className='binder-pocket-meta';meta.textContent=binderMode==='promo'?`${item.no} · Promo`:`${item.no} · ${item.rarity}`;p.appendChild(meta);
+   if(owned&&binderMode!=='promo'&&countOwned(item)>1){const qty=document.createElement('div');qty.className='binder-pocket-qty';qty.textContent=`×${countOwned(item)}`;p.appendChild(qty)}
+   if(owned)p.addEventListener('click',()=>binderBookOpenItem(item));binderBookGrid.appendChild(p)
+ }
+ if(direction&&binderBookPage){binderBookPage.classList.remove('flip-next','flip-prev');void binderBookPage.offsetWidth;binderBookPage.classList.add(direction>0?'flip-next':'flip-prev');setTimeout(()=>binderBookPage?.classList.remove('flip-next','flip-prev'),300)}
+}
+function openBinderBookView(){const items=activeBinderBookItems();if(!items.length){showLevelToast(binderMode==='promo'?'No promo cards are available.':'Select a series first.');return}binderBookPageIndex=0;renderBinderBook();if(!binderBookDialog.open)binderBookDialog.showModal()}
+function turnBinderBook(delta){if(binderBookAnimating)return;const pages=Math.max(1,Math.ceil(activeBinderBookItems().length/9)),next=binderBookPageIndex+delta;if(next<0||next>=pages)return;binderBookAnimating=true;binderBookPageIndex=next;renderBinderBook(delta);setTimeout(()=>binderBookAnimating=false,300)}
 function openCard(c){dialogCard=c;modalName.textContent=c.name;modalMeta.textContent=`${SETS[c.set].name} (${c.set}) · ${c.no} · ${c.rarity}`;const n=countOwned(c);modalOwned.textContent=n?`Owned: ${n} cop${n===1?'y':'ies'}`:'Not owned yet';setImg(modalImg,c);setFavorite.textContent=state.favorite===c.id?'★ Favourite':'Set as favourite';applyFeatureLocks();cardDialog.showModal()}
 function renderCardStrip(el,ids){el.innerHTML='';for(const id of ids){const c=BY_ID[id];if(!c)continue;const d=document.createElement('button');d.type='button';d.className='slot owned';d.innerHTML=`<img alt=""><div class="slot-name">${esc(c.name)}</div><div class="slot-meta">${c.set} · ${c.rarity}</div>`;setImg(d.querySelector('img'),c);d.addEventListener('click',()=>openCard(c));el.appendChild(d)}}
 function renderProfile(){profileName.value=state.profileName||'Trainer';renderLevelUI();lifeBoxes.textContent=state.boxesOpened||0;lifePacks.textContent=state.packsOpened||0;lifeCards.textContent=state.cardsPulled||0;lifeUnique.textContent=uniqueCount();lifeBig.textContent=state.bigHits||0;seriesStats.innerHTML='<div class="series-row head"><span>Series</span><span>Boxes</span><span>Packs</span><span>Cards</span><span>Hits</span></div>'+SERIES_ORDER.map(code=>{const s=SETS[code],x=state.seriesStats[s.name]||{};return `<div class="series-row"><strong>${esc(s.name)} (${code})</strong><span>${x.boxes||0}</span><span>${x.packs||0}</span><span>${x.cards||0}</span><span>${x.bigHits||0}</span></div>`}).join('');renderCardStrip(recentGrid,state.recent.slice(0,12));const best=Object.keys(state.collection).filter(id=>state.collection[id]>0&&BY_ID[id]).map(id=>BY_ID[id]).sort((a,b)=>(RANK[b.rarity]||0)-(RANK[a.rarity]||0)).slice(0,12);renderCardStrip(bestGrid,best.map(c=>c.id));const fav=BY_ID[state.favorite];if(fav){favoriteArea.innerHTML='';const d=document.createElement('button');d.className='slot owned';d.style.maxWidth='180px';d.innerHTML=`<img alt=""><div class="slot-name">${esc(fav.name)}</div><div class="slot-meta">${fav.set} · ${fav.no} · ${fav.rarity}</div>`;setImg(d.querySelector('img'),fav);d.addEventListener('click',()=>openCard(fav));favoriteArea.appendChild(d)}else favoriteArea.textContent='No favourite selected yet. Open a card in the binder to set one.'}
@@ -1848,7 +1957,10 @@ document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',(
  await ripPack();
 });
 packOpenCount.addEventListener('change',updatePrimaryActionButton);
-skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});[binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
+skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});
+seriesBinderBtn?.addEventListener('click',()=>setBinderMode('series'));promoBinderBtn?.addEventListener('click',()=>setBinderMode('promo'));openBinderBook?.addEventListener('click',openBinderBookView);binderBookClose?.addEventListener('click',()=>binderBookDialog?.close());binderBookPrev?.addEventListener('click',()=>turnBinderBook(-1));binderBookNext?.addEventListener('click',()=>turnBinderBook(1));binderBookDialog?.addEventListener('click',e=>{if(e.target===binderBookDialog)binderBookDialog.close()});binderBookDialog?.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();turnBinderBook(-1)}else if(e.key==='ArrowRight'){e.preventDefault();turnBinderBook(1)}});
+if(binderBookPage){let binderSwipeX=null;binderBookPage.addEventListener('pointerdown',e=>{binderSwipeX=e.clientX});binderBookPage.addEventListener('pointerup',e=>{if(binderSwipeX==null)return;const dx=e.clientX-binderSwipeX;binderSwipeX=null;if(Math.abs(dx)>=48)turnBinderBook(dx<0?1:-1)});binderBookPage.addEventListener('pointercancel',()=>{binderSwipeX=null})}
+[binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
 saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile()});storePreviewClose?.addEventListener('click',()=>storePreviewDialog?.close());storePreviewDialog?.addEventListener('click',e=>{if(e.target===storePreviewDialog)storePreviewDialog.close()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});
 driveConnect?.addEventListener('click',()=>connectGoogleDrive(true));
 driveSave?.addEventListener('click',()=>uploadStateToDrive(true));
