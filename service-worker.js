@@ -1,4 +1,4 @@
-const CACHE_NAME='pokemon-pack-simulator-pwa-20260927-v3';
+const CACHE_NAME='pokemon-pack-simulator-pwa-20260927-v4';
 const CORE_ASSETS=[
   './',
   './index.html',

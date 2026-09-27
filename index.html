@@ -348,6 +348,15 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
  .binder-book-status{font-size:9px}.binder-book-page-label{font-size:10px;min-width:96px}
 }
 
+
+/* 2026-09-27 Auto Play + safer Drive sync */
+.auto-play-control{grid-area:finish;display:flex;align-items:center;justify-content:center;gap:10px;min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:11px;background:#1e2330;cursor:pointer;user-select:none;font-weight:900}
+.auto-play-control input{width:20px;height:20px;min-width:20px;margin:0;accent-color:var(--accent);cursor:pointer}
+.auto-play-control span{display:flex;flex-direction:column;gap:1px;line-height:1.1}.auto-play-control strong{font-size:13px}.auto-play-control small{font-size:9px;color:var(--muted);font-weight:750}
+.auto-play-control:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,213,74,.12) inset;background:#27242a}.auto-play-control:has(input:disabled){opacity:.42;cursor:not-allowed}.auto-play-control:has(input:disabled) input{cursor:not-allowed}
+#driveConflictDialog{width:min(760px,94vw);max-width:94vw}.sync-conflict-intro{font-size:12px;color:var(--muted);line-height:1.55;margin:4px 0 12px}.sync-conflict-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sync-choice-card{background:#0f1219;border:1px solid var(--line);border-radius:14px;padding:12px}.sync-choice-card h4{margin:0 0 8px;font-size:14px}.sync-choice-meta{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:11px}.sync-choice-meta span:nth-child(odd){color:var(--muted)}.sync-choice-meta strong{text-align:right}.sync-conflict-warning{margin-top:10px;padding:9px 10px;border:1px solid rgba(255,213,74,.32);background:rgba(255,213,74,.07);border-radius:11px;font-size:11px;line-height:1.5;color:#ffe889}.sync-conflict-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:13px}
+@media(max-width:620px){.sync-conflict-grid{grid-template-columns:1fr}.sync-conflict-actions>*{flex:1 1 140px}.auto-play-control{padding:8px 7px}.auto-play-control strong{font-size:12px}.auto-play-control small{font-size:8px}}
+
 </style>
 </head>
 
@@ -357,7 +366,7 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · PWA INSTALL + RESPONSIVE BINDER · 2026-09-27</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · SAFE DRIVE + AUTO PLAY · 2026-09-27</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">Binder — / —</span></div>
   </div>
   <div class="header-controls"><span class="level-chip header-economy-chip">Lv <span id="headerLevel">1</span><span class="header-coin-sep">·</span><span class="header-coin">🪙 <span id="headerCoins">0</span></span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="musicToggle" type="button" aria-pressed="true">🎵 Music On</button><label class="secondary" style="display:inline-flex;align-items:center;gap:8px;padding-right:10px"><span style="font-weight:800">Vol</span><input id="musicVolume" type="range" min="0" max="100" step="1" value="40" style="width:110px"></label><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button><button class="secondary header-install-btn" id="installAppBtn" type="button">⬇ Install App</button><button class="secondary header-drive-btn" id="headerDriveConnect" type="button">☁ Connect Google Drive</button></div>
@@ -380,11 +389,11 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
       <select id="packOpenCount" class="secondary" aria-label="Packs to open"></select>
       <select id="autoStopRarity" class="secondary" aria-label="Pause auto opening at rarity"><option value="NONE">No auto-stop</option></select>
       <button class="primary" id="pullNext" disabled hidden>Next Card</button>
-      <button class="secondary" id="skipPack" disabled>Autoswipe</button>
+      <label class="auto-play-control" id="autoPlayControl"><input id="skipPack" type="checkbox" disabled><span><strong>Auto Play</strong><small>Open + swipe automatically</small></span></label>
       <button class="secondary" id="newBox">New Box</button>
       <button class="primary" id="nextPack" hidden>Open next booster</button>
     </div>
-    <div class="swipe-help">Swipe the face-up card left, right, or up. Autoswipe reveals cards automatically. You can change the auto-stop condition while Autoswipe is running. God Packs always pause Autoswipe automatically.</div>
+    <div class="swipe-help">Swipe the face-up card left, right, or up. Tick Auto Play to open the selected pack batch and swipe cards automatically. Auto-stop conditions and God Packs pause Auto Play automatically.</div>
     <div class="pack-strip"><div class="strip-head"><div><strong>Booster Box</strong><span class="box-note"> · select any unopened pack</span></div><div class="box-note">Everything stays in this frame.</div></div><div id="packGrid" class="pack-grid"></div></div>
    </div>
   </section>
@@ -415,9 +424,10 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
   <button class="primary" id="driveConnect" type="button">Connect Google Drive</button>
   <button class="secondary" id="driveSave" type="button" disabled>Save to Drive</button>
   <button class="secondary" id="driveLoad" type="button" disabled>Load from Drive</button>
+  <button class="secondary" id="driveRestoreBackup" type="button" hidden>Restore Recovery Copy</button>
   <button class="secondary" id="driveDisconnect" type="button" disabled>Disconnect</button>
  </div>
- <div class="cloud-help">Creates a private <strong>Pokemon Pack Simulator</strong> folder in My Drive and stores <strong>pokemon-pack-simulator-save.json</strong> inside it. Local save remains available for offline play. Once connected on this device, the simulator will try a silent reconnect on future visits. If Google requires interaction, the simulator keeps saving locally and waits for you to press Reconnect Google Drive instead of opening a surprise login window. If a Drive save exists, it is loaded automatically after reconnection.</div>
+ <div class="cloud-help">Creates a private <strong>Pokemon Pack Simulator</strong> folder in My Drive and stores <strong>pokemon-pack-simulator-save.json</strong> inside it. Local save remains available for offline play. Once connected on this device, the simulator will try a silent reconnect on future visits. If Google requires interaction, the simulator keeps saving locally and waits for you to press Reconnect Google Drive instead of opening a surprise login window. On reconnect, the simulator compares this device with Drive first. Unsynced local progress is never silently replaced; if both copies changed, you choose which one to keep.</div>
 </div>
    </div>
 
@@ -461,7 +471,7 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
   </section>
  </main>
 
- <div class="footer-note" id="footerNote">Build: PWA Install + Responsive Binder 2026-09-27 · Background music: “Menu Theme” by tamesu, CC0 via OpenGameArt. · Multi-series simulator across Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Munikis Zero, Ninja Spinner, Abyss Eye, and Storm Emeralda. Standard boxes are simulated as 30 packs with 5 cards each. Store Super Packs now open in fixed rarity order, with 7 cards for most series and 10 cards for MEGA Dream ex. Premium promo cards are exclusive store rewards and do not appear in normal packs. Simulated collation is not an official Pokémon Company guarantee.</div>
+ <div class="footer-note" id="footerNote">Build: Safe Drive + Auto Play 2026-09-27 · Background music: “Menu Theme” by tamesu, CC0 via OpenGameArt. · Multi-series simulator across Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Munikis Zero, Ninja Spinner, Abyss Eye, and Storm Emeralda. Standard boxes are simulated as 30 packs with 5 cards each. Store Super Packs now open in fixed rarity order, with 7 cards for most series and 10 cards for MEGA Dream ex. Premium promo cards are exclusive store rewards and do not appear in normal packs. Simulated collation is not an official Pokémon Company guarantee.</div>
 </div></div>
 
 <div id="tutorialOverlay" class="tutorial-overlay" hidden aria-modal="true" role="dialog" aria-label="Simulator tutorial">
@@ -490,6 +500,15 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
   </div>
 </dialog>
 
+<dialog id="driveConflictDialog" aria-label="Google Drive save conflict">
+ <div class="modal-inner">
+  <h3 style="margin:0 0 6px">Google Drive Sync Conflict</h3>
+  <div class="sync-conflict-intro">Both this device and Google Drive may contain progress that is not on the other copy. Nothing will be replaced until you choose.</div>
+  <div class="sync-conflict-grid"><div class="sync-choice-card"><h4>📱 This Device</h4><div id="driveConflictLocal" class="sync-choice-meta"></div></div><div class="sync-choice-card"><h4>☁ Google Drive</h4><div id="driveConflictCloud" class="sync-choice-meta"></div></div></div>
+  <div class="sync-conflict-warning">Choosing Google Drive first creates a recovery copy of the current local save. Choosing This Device uploads the current local progress to Drive.</div>
+  <div class="sync-conflict-actions"><button class="primary" id="driveConflictUseLocal" type="button">Use This Device</button><button class="secondary" id="driveConflictUseCloud" type="button">Use Google Drive</button><button class="secondary" id="driveConflictCancel" type="button">Cancel</button></div>
+ </div>
+</dialog>
 <dialog id="storePreviewDialog" aria-label="Store image preview"><button id="storePreviewClose" class="close-x" type="button" aria-label="Close preview">×</button><div class="store-preview-inner"><img id="storePreviewImg" alt=""><div id="storePreviewTitle"></div></div></dialog>
 <dialog id="installHelpDialog" aria-label="Install Pokémon Pack Simulator">
  <button id="installHelpClose" class="close-x" type="button" aria-label="Close install help">×</button>
@@ -510,8 +529,8 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
 <dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
-const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','musicToggle','musicVolume','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','headerDriveConnect','installAppBtn','driveSave','driveLoad','driveDisconnect','storePreviewDialog','storePreviewClose','storePreviewImg','storePreviewTitle','installHelpDialog','installHelpClose','installHelpTitle','installHelpText','installHelpOkay','binderDescription','binderProgressLabel','binderSellNote','seriesBinderBtn','promoBinderBtn','openBinderBook','binderBookDialog','binderBookClose','binderBookTitle','binderBookStatus','binderBookPage','binderBookGrid','binderBookGridRight','binderBookPrev','binderBookNext','binderBookPageLabel'].forEach(id=>E[id]=$(id));
-const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,musicToggle,musicVolume,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,headerDriveConnect,installAppBtn,driveSave,driveLoad,driveDisconnect,storePreviewDialog,storePreviewClose,storePreviewImg,storePreviewTitle,installHelpDialog,installHelpClose,installHelpTitle,installHelpText,installHelpOkay,binderDescription,binderProgressLabel,binderSellNote,seriesBinderBtn,promoBinderBtn,openBinderBook,binderBookDialog,binderBookClose,binderBookTitle,binderBookStatus,binderBookPage,binderBookGrid,binderBookGridRight,binderBookPrev,binderBookNext,binderBookPageLabel}=E;
+const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','musicToggle','musicVolume','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','headerDriveConnect','installAppBtn','driveSave','driveLoad','driveRestoreBackup','driveDisconnect','driveConflictDialog','driveConflictLocal','driveConflictCloud','driveConflictUseLocal','driveConflictUseCloud','driveConflictCancel','autoPlayControl','storePreviewDialog','storePreviewClose','storePreviewImg','storePreviewTitle','installHelpDialog','installHelpClose','installHelpTitle','installHelpText','installHelpOkay','binderDescription','binderProgressLabel','binderSellNote','seriesBinderBtn','promoBinderBtn','openBinderBook','binderBookDialog','binderBookClose','binderBookTitle','binderBookStatus','binderBookPage','binderBookGrid','binderBookGridRight','binderBookPrev','binderBookNext','binderBookPageLabel'].forEach(id=>E[id]=$(id));
+const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,musicToggle,musicVolume,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,headerDriveConnect,installAppBtn,driveSave,driveLoad,driveRestoreBackup,driveDisconnect,driveConflictDialog,driveConflictLocal,driveConflictCloud,driveConflictUseLocal,driveConflictUseCloud,driveConflictCancel,autoPlayControl,storePreviewDialog,storePreviewClose,storePreviewImg,storePreviewTitle,installHelpDialog,installHelpClose,installHelpTitle,installHelpText,installHelpOkay,binderDescription,binderProgressLabel,binderSellNote,seriesBinderBtn,promoBinderBtn,openBinderBook,binderBookDialog,binderBookClose,binderBookTitle,binderBookStatus,binderBookPage,binderBookGrid,binderBookGridRight,binderBookPrev,binderBookNext,binderBookPageLabel}=E;
 // --- Built-in sound engine (Web Audio API; no external audio files required) ---
 const SoundFX=(()=>{
  let ctx=null,master=null;
@@ -692,6 +711,8 @@ const DRIVE_FOLDER_KEY='pokemon_pack_drive_folder_id_v1';
 const DRIVE_FILE_KEY='pokemon_pack_drive_file_id_v1';
 const DRIVE_LAST_SYNC_KEY='pokemon_pack_drive_last_sync_v1';
 const DRIVE_LOCAL_UPDATED_KEY='pokemon_pack_drive_local_updated_v1';
+const DRIVE_REMOTE_MODIFIED_KEY='pokemon_pack_drive_remote_modified_v2';
+const DRIVE_RECOVERY_KEY='pokemon_pack_drive_recovery_v2';
 const DRIVE_SESSION_TOKEN_KEY='pokemon_pack_drive_session_token_v1';
 const DRIVE_SESSION_EXPIRY_KEY='pokemon_pack_drive_session_expiry_v1';
 let driveTokenClient=null,driveAccessToken='',driveTokenExpiresAt=0,driveReady=false,driveAutosaveTimer=null,driveSyncBusy=false,driveInitialSyncDone=false;
@@ -733,6 +754,7 @@ function updateDriveConnectButtons(){
    headerDriveConnect.classList.toggle('drive-connected',connected);
    headerDriveConnect.classList.toggle('drive-reconnect',!connected&&remembered);
  }
+ if(driveRestoreBackup)driveRestoreBackup.hidden=!localStorage.getItem(DRIVE_RECOVERY_KEY);
 }
 function setDriveStatus(text,kind=''){
  if(driveStatus){driveStatus.textContent=text;driveStatus.className='cloud-status'+(kind?' '+kind:'')}
@@ -838,7 +860,63 @@ async function ensureDriveSaveFile(createIfMissing=false){
  const r=await driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body});
  file=await r.json();localStorage.setItem(DRIVE_FILE_KEY,file.id);return file;
 }
-function makeDrivePayload(){return {format:'pokemon-pack-simulator-cloud-save-v1',updatedAt:new Date().toISOString(),state}}
+function makeDrivePayload(){return {format:'pokemon-pack-simulator-cloud-save-v2',updatedAt:new Date().toISOString(),state}}
+function driveTime(value){const n=typeof value==='number'?value:Date.parse(value||'');return Number.isFinite(n)?n:0}
+function formatDriveTime(ms){if(!ms)return 'Unknown';try{return new Date(ms).toLocaleString()}catch(_){return 'Unknown'}}
+function driveSummary(s,updatedMs=0){
+ const xp=Math.max(0,Number(s?.xp||0)),packs=Math.max(0,Number(s?.packsOpened||0)),ver=Number(s?.progressionVersion||1);
+ let level=1;try{level=levelInfoForVersion(xp,ver,packs).level}catch(_){}
+ const unique=Object.values(s?.collection||{}).filter(v=>Number(v)>0).length;
+ return {level,packs,boxes:Math.max(0,Number(s?.boxesOpened||0)),unique,coins:Math.max(0,Number(s?.pokecoins||0)),big:Math.max(0,Number(s?.bigHits||0)),updatedMs};
+}
+function renderDriveSummary(el,s){if(!el)return;el.innerHTML=`<span>Trainer level</span><strong>Lv ${s.level}</strong><span>Boxes opened</span><strong>${s.boxes}</strong><span>Packs opened</span><strong>${s.packs}</strong><span>Unique cards</span><strong>${s.unique}</strong><span>Big hits</span><strong>${s.big}</strong><span>PokéCoins</span><strong>${s.coins.toLocaleString()}</strong><span>Last changed</span><strong>${esc(formatDriveTime(s.updatedMs))}</strong>`}
+function saveDriveRecoveryCopy(reason='Before cloud overwrite'){
+ try{localStorage.setItem(DRIVE_RECOVERY_KEY,JSON.stringify({createdAt:Date.now(),reason,localUpdatedAt:Number(localStorage.getItem(DRIVE_LOCAL_UPDATED_KEY)||Date.now()),state}));updateDriveConnectButtons();return true}catch(_){return false}
+}
+function restoreDriveRecoveryCopy(){
+ try{
+   const raw=localStorage.getItem(DRIVE_RECOVERY_KEY);if(!raw)return false;
+   const data=JSON.parse(raw);if(!data?.state?.collection)return false;
+   if(!confirm('Restore the recovery copy and replace the current local progress on this device?'))return false;
+   state={...state,...data.state};if(typeof state.progressionVersion!=='number')state.progressionVersion=1;migrateProgressionToV3();
+   localStorage.setItem(STORAGE,JSON.stringify(state));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(Date.now()));
+   refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();renderPackStats();
+   setDriveStatus('☁ Recovery restored · not yet synced','warn');
+   if(driveReady)driveInitialSyncDone=false;
+   return true;
+ }catch(e){alert('Recovery copy could not be restored.');return false}
+}
+async function fetchDriveSnapshot(file=null){
+ file=file||await ensureDriveSaveFile(false);if(!file)return null;
+ const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(file.id)+'?alt=media');
+ const data=await r.json(),incoming=data?.state||data;
+ if(!incoming?.collection)throw new Error('Cloud save is not valid.');
+ return {file,data,incoming,remoteModifiedMs:driveTime(file.modifiedTime)||driveTime(data?.updatedAt)};
+}
+function applyDriveIncoming(snapshot,{backup=true}={}){
+ if(!snapshot?.incoming?.collection)return false;
+ if(backup)saveDriveRecoveryCopy('Before loading Google Drive');
+ state={...state,...snapshot.incoming};
+ for(const code of SERIES_ORDER){const ss=SETS[code];if(!state.seriesStats?.[ss.name]){state.seriesStats=state.seriesStats||{};state.seriesStats[ss.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}}
+ if(typeof state.progressionVersion!=='number')state.progressionVersion=1;migrateProgressionToV3();
+ localStorage.setItem(STORAGE,JSON.stringify(state));
+ const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
+ if(snapshot.remoteModifiedMs)localStorage.setItem(DRIVE_REMOTE_MODIFIED_KEY,String(snapshot.remoteModifiedMs));
+ refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();renderPackStats();
+ return true;
+}
+function askDriveConflict(snapshot){
+ return new Promise(resolve=>{
+   if(!driveConflictDialog){resolve('cancel');return}
+   const localUpdated=Number(localStorage.getItem(DRIVE_LOCAL_UPDATED_KEY)||0);
+   renderDriveSummary(driveConflictLocal,driveSummary(state,localUpdated));
+   renderDriveSummary(driveConflictCloud,driveSummary(snapshot.incoming,snapshot.remoteModifiedMs||driveTime(snapshot.data?.updatedAt)));
+   let done=false;const finish=choice=>{if(done)return;done=true;driveConflictDialog.close();resolve(choice)};
+   driveConflictUseLocal.onclick=()=>finish('local');driveConflictUseCloud.onclick=()=>finish('cloud');driveConflictCancel.onclick=()=>finish('cancel');
+   driveConflictDialog.oncancel=e=>{e.preventDefault();finish('cancel')};
+   if(!driveConflictDialog.open)driveConflictDialog.showModal();
+ })
+}
 async function uploadStateToDrive(manual=false){
  if(!driveReady||driveSyncBusy)return false;
  driveSyncBusy=true;setDriveStatus(manual?'☁ Saving to Drive…':'☁ Autosaving…','sync');
@@ -848,6 +926,7 @@ async function uploadStateToDrive(manual=false){
    const r=await driveFetch('https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(file.id)+'?uploadType=media&fields=id,modifiedTime',{method:'PATCH',headers:{'Content-Type':'application/json'},body:payload});
    const updated=await r.json();
    const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
+   const remoteMs=driveTime(updated.modifiedTime);if(remoteMs)localStorage.setItem(DRIVE_REMOTE_MODIFIED_KEY,String(remoteMs));
    setDriveStatus('☁ Synced','ok');return updated;
  }catch(e){if(isDriveReauthError(e)){markDriveReconnectRequired();return false}setDriveStatus('☁ Save failed · '+e.message,'warn');return false}
  finally{driveSyncBusy=false;setDriveButtonsAfterBusy()}
@@ -861,42 +940,42 @@ function setDriveButtonsAfterBusy(){
 }
 async function downloadStateFromDrive(manual=false){
  if(!driveReady||driveSyncBusy)return false;
- driveSyncBusy=true;setDriveStatus('☁ Loading from Drive…','sync');
+ driveSyncBusy=true;setDriveStatus('☁ Checking Google Drive…','sync');
  try{
-   const file=await ensureDriveSaveFile(false);
-   if(!file){setDriveStatus('☁ No cloud save yet','sync');return null}
-   const r=await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(file.id)+'?alt=media');
-   const data=await r.json();const incoming=data?.state||data;
-   if(!incoming?.collection)throw new Error('Cloud save is not valid.');
-   state={...state,...incoming};
-   for(const code of SERIES_ORDER){const ss=SETS[code];if(!state.seriesStats?.[ss.name]){state.seriesStats=state.seriesStats||{};state.seriesStats[ss.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}}
-   if(typeof state.progressionVersion!=='number')state.progressionVersion=1;migrateProgressionToV3();
-   localStorage.setItem(STORAGE,JSON.stringify(state));
-   const now=Date.now();localStorage.setItem(DRIVE_LAST_SYNC_KEY,String(now));localStorage.setItem(DRIVE_LOCAL_UPDATED_KEY,String(now));
-   refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();
-   setDriveStatus('☁ Synced','ok');return true;
+   const file=await ensureDriveSaveFile(false);if(!file){setDriveStatus('☁ No cloud save yet','sync');return null}
+   const snapshot=await fetchDriveSnapshot(file);
+   const lastSync=Number(localStorage.getItem(DRIVE_LAST_SYNC_KEY)||0),localUpdated=Number(localStorage.getItem(DRIVE_LOCAL_UPDATED_KEY)||0);
+   const localDirty=localUpdated>lastSync+500;
+   if(manual&&localDirty){
+     driveSyncBusy=false;const choice=await askDriveConflict(snapshot);driveSyncBusy=true;
+     if(choice==='cancel'){setDriveStatus('☁ Load cancelled · local progress kept','warn');return false}
+     if(choice==='local'){driveSyncBusy=false;const result=await uploadStateToDrive(true);return !!result}
+   }
+   applyDriveIncoming(snapshot,{backup:true});setDriveStatus('☁ Cloud save loaded · Synced','ok');return true;
  }catch(e){if(isDriveReauthError(e)){markDriveReconnectRequired();return false}setDriveStatus('☁ Load failed · '+e.message,'warn');return false}
  finally{driveSyncBusy=false;setDriveButtonsAfterBusy()}
 }
 function scheduleDriveAutosave(){
  if(!driveReady||!driveInitialSyncDone)return;
- clearTimeout(driveAutosaveTimer);
- driveAutosaveTimer=setTimeout(()=>uploadStateToDrive(false),3000);
+ clearTimeout(driveAutosaveTimer);driveAutosaveTimer=setTimeout(()=>uploadStateToDrive(false),3000);
 }
 async function prepareDriveAfterAuth({firstConnect=false}={}){
- driveReady=true;
- localStorage.setItem(DRIVE_CONNECTED_KEY,'1');
- setDriveStatus('☁ Connected · checking cloud save…','sync');
+ driveReady=true;localStorage.setItem(DRIVE_CONNECTED_KEY,'1');setDriveStatus('☁ Connected · comparing saves…','sync');
  const remote=await ensureDriveSaveFile(false);
- if(remote){
-   const loaded=await downloadStateFromDrive(false);
-   driveInitialSyncDone=loaded===true;
-   if(loaded===true)setDriveStatus('☁ Cloud save loaded · Synced','ok');
-   return;
+ if(!remote){const uploaded=await uploadStateToDrive(false);driveInitialSyncDone=!!uploaded;if(uploaded)setDriveStatus('☁ Cloud save created · Synced','ok');return}
+ const snapshot=await fetchDriveSnapshot(remote);
+ const lastSync=Number(localStorage.getItem(DRIVE_LAST_SYNC_KEY)||0),localUpdated=Number(localStorage.getItem(DRIVE_LOCAL_UPDATED_KEY)||0),knownRemote=Number(localStorage.getItem(DRIVE_REMOTE_MODIFIED_KEY)||0);
+ const localDirty=localUpdated>lastSync+500;
+ const remoteDirty=knownRemote>0&&snapshot.remoteModifiedMs>knownRemote+500;
+ if(localDirty){
+   if(knownRemote>0&&!remoteDirty){const uploaded=await uploadStateToDrive(false);driveInitialSyncDone=!!uploaded;if(uploaded)setDriveStatus('☁ Local progress uploaded · Synced','ok');return}
+   const choice=await askDriveConflict(snapshot);
+   if(choice==='local'){const uploaded=await uploadStateToDrive(true);driveInitialSyncDone=!!uploaded;if(uploaded)setDriveStatus('☁ This device uploaded · Synced','ok');return}
+   if(choice==='cloud'){applyDriveIncoming(snapshot,{backup:true});driveInitialSyncDone=true;setDriveStatus('☁ Google Drive loaded · Synced','ok');return}
+   driveInitialSyncDone=false;setDriveStatus('☁ Connected · sync paused · local progress kept','warn');return;
  }
- const uploaded=await uploadStateToDrive(false);
- driveInitialSyncDone=!!uploaded;
- if(uploaded)setDriveStatus('☁ Cloud save created · Synced','ok');
+ if(knownRemote>0&&!remoteDirty){driveInitialSyncDone=true;setDriveStatus('☁ Synced','ok');return}
+ applyDriveIncoming(snapshot,{backup:true});driveInitialSyncDone=true;setDriveStatus('☁ Google Drive loaded · Synced','ok');
 }
 async function connectGoogleDrive(interactive=true){
  if(driveSyncBusy)return;
@@ -915,7 +994,7 @@ async function connectGoogleDrive(interactive=true){
 function disconnectGoogleDrive(){
  if(driveAccessToken&&window.google?.accounts?.oauth2){try{google.accounts.oauth2.revoke(driveAccessToken,()=>{})}catch(_){} }
  clearDriveSessionToken();driveReady=false;driveInitialSyncDone=false;driveSyncBusy=false;clearTimeout(driveAutosaveTimer);
- localStorage.removeItem(DRIVE_CONNECTED_KEY);localStorage.removeItem(DRIVE_FOLDER_KEY);localStorage.removeItem(DRIVE_FILE_KEY);localStorage.removeItem(DRIVE_LAST_SYNC_KEY);
+ localStorage.removeItem(DRIVE_CONNECTED_KEY);localStorage.removeItem(DRIVE_FOLDER_KEY);localStorage.removeItem(DRIVE_FILE_KEY);localStorage.removeItem(DRIVE_LAST_SYNC_KEY);localStorage.removeItem(DRIVE_REMOTE_MODIFIED_KEY);
  setDriveStatus('☁ Not connected');setDriveButtonsAfterBusy();
 }
 async function autoReconnectGoogleDrive(){
@@ -1116,6 +1195,8 @@ function levelInfo(xp=state.xp||0){
  };
 }
 const getLevel=()=>levelInfo().level;
+function isDerekUnlimited(){return String(state.profileName||'').trim().toLowerCase()==='derektyc'}
+function hasUnlimitedBoxAccess(){return getLevel()>=200||isDerekUnlimited()}
 function maxPacksForLevel(l=getLevel()){return 5}
 function maxBoxesForLevel(l=getLevel()){if(l>=175)return 10;if(l>=150)return 9;if(l>=125)return 8;if(l>=100)return 7;if(l>=75)return 6;if(l>=50)return 5;if(l>=40)return 4;if(l>=30)return 3;if(l>=20)return 2;if(l>=10)return 1;return 0}
 const MILESTONES=[
@@ -1140,9 +1221,9 @@ function grantXP(amount,reason=''){amount=Math.max(0,Math.floor(amount||0));if(!
 function applyFeatureLocks(){
  const l=getLevel(),auto=l>=5,sell=l>=10,store=l>=10;
  autoStopRarity.disabled=!auto;
- if(!currentPack)skipPack.disabled=true;else skipPack.disabled=!auto;
- if(!auto)skipPack.textContent='Autoswipe · Lv 5';
- else if(!autoRunning&&skipPack.textContent.startsWith('Autoswipe'))skipPack.textContent='Autoswipe';
+ skipPack.disabled=!auto||!CURRENT_SERIES;
+ if(!auto){skipPack.checked=false;autoCancel=true}
+ if(autoPlayControl)autoPlayControl.title=auto?'Tick to automatically open and swipe the selected pack batch.':'Unlocks at Level 5';
  const storeBtn=document.querySelector('[data-view="storeView"]');
  if(storeBtn){storeBtn.disabled=!store;storeBtn.title=store?'':'Unlocks at Level 10'}
  if(sellAllDuplicates){sellAllDuplicates.disabled=!sell||binderMode==='promo';sellAllDuplicates.textContent=binderMode==='promo'?'Sell Duplicates · Series Only':(sell?'Sell All Duplicates':'Sell Duplicates · Lv 10')}
@@ -1190,8 +1271,8 @@ function refreshPackControls(){
  packOpenCount.disabled=false;newBox.disabled=false;
  const prev=packOpenCount.value||'PACK:1',l=getLevel();packOpenCount.innerHTML='';
  const maxP=maxPacksForLevel(l);for(let i=1;i<=maxP;i++){const o=document.createElement('option');o.value=`PACK:${i}`;o.textContent=`${i} pack${i===1?'':'s'}`;packOpenCount.appendChild(o)}
- const maxB=maxBoxesForLevel(l);for(let i=1;i<=maxB;i++){const o=document.createElement('option');o.value=`BOX:${i}`;o.textContent=`${i} box${i===1?'':'es'}`;packOpenCount.appendChild(o)}
- if(l>=200){const o=document.createElement('option');o.value='UNLIMITED';o.textContent='∞ Unlimited Boxes';packOpenCount.appendChild(o)}
+ const maxB=isDerekUnlimited()?10:maxBoxesForLevel(l);for(let i=1;i<=maxB;i++){const o=document.createElement('option');o.value=`BOX:${i}`;o.textContent=`${i} box${i===1?'':'es'}`;packOpenCount.appendChild(o)}
+ if(hasUnlimitedBoxAccess()){const o=document.createElement('option');o.value='UNLIMITED';o.textContent=isDerekUnlimited()?'∞ Unlimited Boxes · derektyc':'∞ Unlimited Boxes';packOpenCount.appendChild(o)}
  packOpenCount.value=[...packOpenCount.options].some(o=>o.value===prev)?prev:'PACK:1';
  const prevStop=autoStopRarity.value||'NONE';const opts=['NONE','NEW','FULL_BINDER','RR','AR','SR',...(s.type==='highclass'?['MA']:[]),'SAR','MUR'];
  autoStopRarity.innerHTML=opts.map(r=>{const label=r==='NONE'?'No auto-stop':r==='NEW'?'Pause at New Card':r==='FULL_BINDER'?'Stop at Full Binder':r==='MUR'?'Pause at MUR':`Pause at ${r}+`;return `<option value="${r}">${label}</option>`}).join('');
@@ -1218,8 +1299,8 @@ function makeHighClassBox(){const s=currentSet();box=Array.from({length:s.packsP
  const specialMap=new Map(),put=c=>{if(c&&slots.length)specialMap.set(slots.shift(),c)};for(let i=0;i<3;i++)put(pick(pools.AR));put(pick(pools.MA));const util=splitSR().utility;put(pick(util.length?util:pools.SR));
  if(Math.random()<.35){const x=Math.random();put(x<.02&&pools.MUR.length?pick(pools.MUR):x<.58&&pools.SAR.length?pick(pools.SAR):pick(pools.SR))}
  box.forEach((p,i)=>p.cards=makeHighClassPack(specialMap.get(i)||null))}
-function makeBox(){autoCancel=true;autoRunning=false;autoPauseCardId=null;skipPack.textContent='Autoswipe';skipPack.classList.remove('auto-active');sessionPulled=0;sessionBig=0;openQueue=[];queueIndex=0;batchRemainingTotal=0;prepareGeneratedBox(true)}
-function resetStage(){cardShell.hidden=true;swipeCard.style.visibility='visible';swipeCard.style.transition='';swipeCard.style.transform='';swipeCard.style.opacity='1';cardStackLayer.innerHTML='';stackCount.textContent='';emptyState.hidden=true;emptyState.innerHTML='';pullName.textContent='';pullNo.textContent='';hitLine.textContent='';rarityTag.textContent='';rarityTag.className='rarity-tag';rarityTag.style.display='none';swipeCard.classList.remove('new-card');pullNext.disabled=true;skipPack.disabled=true;nextPack.hidden=true;cardShown=false;cardShell.dataset.renderKey='';boosterWrap.className='booster-wrap';openPack.disabled=box[selected]?.opened||false;packStatus.classList.remove('god-pack');packStatus.textContent=box[selected]?.opened?'That pack is already opened. Choose another below.':`Pack ${selected+1} selected.`;document.querySelector('.stage-top h2').textContent='Open booster';const s=currentSet();boxSummary.innerHTML=`${s.packsPerBox} packs · ${s.cardsPerPack} cards each${s.type==='highclass'?' · <span class="high-class-chip">High Class Pack</span>':' · simulated Japanese box'}`;boosterImg.src=s.booster||boosterFallback(s);updatePrimaryActionButton()}
+function makeBox(){autoCancel=true;autoRunning=false;autoPauseCardId=null;skipPack.checked=false;sessionPulled=0;sessionBig=0;openQueue=[];queueIndex=0;batchRemainingTotal=0;prepareGeneratedBox(true)}
+function resetStage(){cardShell.hidden=true;swipeCard.style.visibility='visible';swipeCard.style.transition='';swipeCard.style.transform='';swipeCard.style.opacity='1';cardStackLayer.innerHTML='';stackCount.textContent='';emptyState.hidden=true;emptyState.innerHTML='';pullName.textContent='';pullNo.textContent='';hitLine.textContent='';rarityTag.textContent='';rarityTag.className='rarity-tag';rarityTag.style.display='none';swipeCard.classList.remove('new-card');pullNext.disabled=true;skipPack.disabled=getLevel()<5||!CURRENT_SERIES;nextPack.hidden=true;cardShown=false;cardShell.dataset.renderKey='';boosterWrap.className='booster-wrap';openPack.disabled=box[selected]?.opened||false;packStatus.classList.remove('god-pack');packStatus.textContent=box[selected]?.opened?'That pack is already opened. Choose another below.':`Pack ${selected+1} selected.`;document.querySelector('.stage-top h2').textContent='Open booster';const s=currentSet();boxSummary.innerHTML=`${s.packsPerBox} packs · ${s.cardsPerPack} cards each${s.type==='highclass'?' · <span class="high-class-chip">High Class Pack</span>':' · simulated Japanese box'}`;boosterImg.src=s.booster||boosterFallback(s);updatePrimaryActionButton()}
 function updatePrimaryActionButton(){
  if(!openPack)return;
  if(!CURRENT_SERIES){
@@ -1259,7 +1340,7 @@ function prepareGeneratedBox(preserveSession=false){autoPauseCardId=null;const s
 
 function buildQueue(){const req=parseOpenSelection();batchUnlimited=req.kind==='UNLIMITED';batchRemainingTotal=req.totalPacks;if(Number.isFinite(req.totalPacks))state.achievementStats.maxBatch=Math.max(state.achievementStats.maxBatch||0,req.totalPacks);refillQueueFromCurrentBox();newBox.textContent=batchUnlimited?'Stop Unlimited':'New Box';return openQueue}
 async function ripPack(){if(busy||currentPack||autoRunning)return;if(box.every(p=>p.opened)){openPack.disabled=true;return}openQueue=buildQueue();queueIndex=0;if(!openQueue.length)return;await openQueuedPack()}
-async function openQueuedPack(){if(queueIndex>=openQueue.length){if(batchRemainingTotal>0){prepareGeneratedBox(batchUnlimited);refillQueueFromCurrentBox();if(!openQueue.length){finishBatch();return}}else{finishBatch();return}}selected=openQueue[queueIndex];const p=box[selected];if(!p||p.opened){queueIndex++;return openQueuedPack()}busy=true;openPack.disabled=true;batchRemainingTotal=Math.max(0,batchRemainingTotal-1);recordPackOpened(p);renderPacks();boosterWrap.classList.add('shake');await wait(380);boosterWrap.classList.add('tearing');await wait(300);boosterWrap.classList.add('opened');await wait(260);boosterWrap.classList.add('hidden');currentPack=p;currentIndex=0;busy=false;if(p.god){SoundFX.god();state.achievementStats.godPacks=(state.achievementStats.godPacks||0)+1;grantXP(1000,'God Pack');packStatus.classList.add('god-pack');packStatus.textContent='✦ GOD PACK! ✦';save();checkAchievements()}else{packStatus.classList.remove('god-pack');packStatus.textContent=`Pack ${selected+1} · Card 1 of ${currentSet().cardsPerPack}`;}showCurrentCard();tutorialPackOpened()}
+async function openQueuedPack(){if(queueIndex>=openQueue.length){if(batchRemainingTotal>0){prepareGeneratedBox(batchUnlimited);refillQueueFromCurrentBox();if(!openQueue.length){finishBatch();return}}else{finishBatch();return}}selected=openQueue[queueIndex];const p=box[selected];if(!p||p.opened){queueIndex++;return openQueuedPack()}busy=true;openPack.disabled=true;batchRemainingTotal=Math.max(0,batchRemainingTotal-1);recordPackOpened(p);renderPacks();boosterWrap.classList.add('shake');await wait(380);boosterWrap.classList.add('tearing');await wait(300);boosterWrap.classList.add('opened');await wait(260);boosterWrap.classList.add('hidden');currentPack=p;currentIndex=0;busy=false;if(p.god){SoundFX.god();state.achievementStats.godPacks=(state.achievementStats.godPacks||0)+1;grantXP(1000,'God Pack');packStatus.classList.add('god-pack');packStatus.textContent='✦ GOD PACK! ✦';save();checkAchievements()}else{packStatus.classList.remove('god-pack');packStatus.textContent=`Pack ${selected+1} · Card 1 of ${currentSet().cardsPerPack}`;}showCurrentCard();tutorialPackOpened();if(skipPack.checked&&!autoRunning)setTimeout(()=>startAutoPlay(),0)}
 function renderStack(){cardStackLayer.innerHTML='';if(!currentPack)return;const remain=currentPack.cards.length-currentIndex;for(let i=Math.min(remain-1,4);i>=1;i--){const c=currentPack.cards[currentIndex+i],d=document.createElement('div');d.className='stack-card';d.style.transform=`translate(${i*3}px,${i*5}px) scale(${1-i*.012})`;const im=document.createElement('img');im.alt='';setImg(im,c);d.appendChild(im);cardStackLayer.appendChild(d)}stackCount.textContent=remain>1?`${remain} cards`:''}
 
 function checkBinderCoinRewards(code){
@@ -1304,7 +1385,7 @@ function showCurrentCard(){
  renderStack();
 
  pullNext.disabled=false;
- skipPack.disabled=getLevel()<5;
+ skipPack.disabled=getLevel()<5||!CURRENT_SERIES;
  cardShown=true;
 
  packStatus.textContent=currentPack.god
@@ -1427,9 +1508,11 @@ async function finishOnePack(){
    if(superPackQueue.length){packStatus.textContent='Super Pack complete · preparing next Super Pack';await wait(autoRunning?350:150);openNextPurchasedSuperPack();return}
    resetStage();packStatus.textContent='Super Packs complete · Ready for a normal pack.';openPack.disabled=false;renderStore();checkAchievements();return
  }
- queueIndex++;if(queueIndex<openQueue.length||batchRemainingTotal>0){packStatus.textContent='Pack complete · preparing next pack';await wait(autoRunning?350:150);boosterWrap.className='booster-wrap';boosterImg.src=currentSet().booster||boosterFallback(currentSet());await openQueuedPack();return}finishBatch()
+  queueIndex++;
+  if(autoRunning&&autoCancel){batchRemainingTotal=0;openQueue=[];queueIndex=0;finishBatch();packStatus.textContent='Auto Play stopped · ready for the next pack.';return}
+  if(queueIndex<openQueue.length||batchRemainingTotal>0){packStatus.textContent='Pack complete · preparing next pack';await wait(autoRunning?350:150);boosterWrap.className='booster-wrap';boosterImg.src=currentSet().booster||boosterFallback(currentSet());await openQueuedPack();return}finishBatch()
 }
-function finishBatch(){autoRunning=false;autoCancel=false;batchUnlimited=false;newBox.textContent='New Box';skipPack.classList.remove('auto-active');skipPack.textContent='Autoswipe';skipPack.disabled=true;pullNext.disabled=true;openQueue=[];queueIndex=0;batchRemainingTotal=0;const n=findNextUnopened(selected+1);if(n>=0){selected=n;renderPacks();resetStage();packStatus.textContent='Ready for next pack.';openPack.disabled=false}else{renderPacks();resetStage();packStatus.textContent='Box complete! Start a New Box to continue.';openPack.disabled=true}checkAchievements()}
+function finishBatch(){autoRunning=false;autoCancel=false;batchUnlimited=false;newBox.textContent='New Box';skipPack.checked=false;skipPack.disabled=getLevel()<5||!CURRENT_SERIES;pullNext.disabled=true;openQueue=[];queueIndex=0;batchRemainingTotal=0;const n=findNextUnopened(selected+1);if(n>=0){selected=n;renderPacks();resetStage();packStatus.textContent='Ready for next pack.';openPack.disabled=false}else{renderPacks();resetStage();packStatus.textContent='Box complete! Start a New Box to continue.';openPack.disabled=true}checkAchievements()}
 
 function stopUnlimited(){
  if(!batchUnlimited)return false;
@@ -1451,30 +1534,37 @@ function pauseAutoswipeForDecision(decision){
  if(!decision?.meets)return false;
  const {shown,threshold,godStop,binderFull}=decision;
  if(shown.id===autoPauseCardId)return false;
- autoPauseCardId=shown.id;autoRunning=false;autoCancel=false;skipPack.classList.remove('auto-active');skipPack.textContent='Continue Autoswipe';skipPack.disabled=false;pullNext.disabled=false;
- if(godStop){packStatus.textContent='✦ GOD PACK! ✦ Autoswipe paused automatically — Continue Autoswipe when ready.'}
+ autoPauseCardId=shown.id;autoRunning=false;autoCancel=false;skipPack.checked=false;skipPack.disabled=getLevel()<5||!CURRENT_SERIES;pullNext.disabled=false;
+ if(godStop){packStatus.textContent='✦ GOD PACK! ✦ Auto Play paused automatically.'}
  else if(binderFull){batchUnlimited=false;batchRemainingTotal=0;newBox.textContent='New Box';packStatus.textContent=`🎉 Binder Complete! ${uniqueCount(CURRENT_SERIES)} / ${cards.length} cards collected.`}
- else if(threshold==='NEW'){packStatus.textContent=`Paused at new card: ${shown.name} — Continue Autoswipe when ready.`}
- else{packStatus.textContent=`Paused at ${shown.rarity}: ${shown.name} — Continue Autoswipe when ready.`}
+ else if(threshold==='NEW'){packStatus.textContent=`Auto Play paused at new card: ${shown.name}.`}
+ else{packStatus.textContent=`Auto Play paused at ${shown.rarity}: ${shown.name}.`}
  return true;
 }
 async function finishCurrentPack(){
- if(getLevel()<5)return;
- if(autoRunning){autoCancel=true;skipPack.textContent='Pausing…';return}
+ if(getLevel()<5||!skipPack.checked)return;
+ if(autoRunning)return;
  if(!currentPack||busy)return;
- autoRunning=true;autoCancel=false;skipPack.textContent='Pause Autoswipe';skipPack.classList.add('auto-active');pullNext.disabled=true;
- while(currentPack&&currentIndex>=0&&currentIndex<currentPack.cards.length&&!autoCancel){
-   // Re-read the dropdown every cycle so changing the condition takes effect immediately.
+ autoRunning=true;autoCancel=false;pullNext.disabled=true;
+ while(currentPack&&currentIndex>=0&&currentIndex<currentPack.cards.length&&!autoCancel&&skipPack.checked){
    if(pauseAutoswipeForDecision(currentAutoStopDecision()))return;
-   await wait(300);
-   if(autoCancel)break;
-   // Re-check after the display delay in case the player changed the condition while this card was visible.
+   await wait(300);if(autoCancel||!skipPack.checked)break;
    if(pauseAutoswipeForDecision(currentAutoStopDecision()))return;
    await dismissCard('up',500);await wait(100)
  }
- autoRunning=false;skipPack.classList.remove('auto-active');
- if(autoCancel&&currentPack){autoCancel=false;skipPack.textContent='Continue Autoswipe';skipPack.disabled=false;pullNext.disabled=false;packStatus.textContent='Autoswipe paused — Continue Autoswipe when ready.'}
- else skipPack.textContent='Autoswipe'
+ autoRunning=false;
+ if((autoCancel||!skipPack.checked)&&currentPack){autoCancel=false;skipPack.checked=false;skipPack.disabled=getLevel()<5||!CURRENT_SERIES;pullNext.disabled=false;packStatus.textContent='Auto Play stopped · continue manually or tick Auto Play again.'}
+}
+async function startAutoPlay(){
+ if(skipPack.disabled||getLevel()<5||!CURRENT_SERIES){skipPack.checked=false;return}
+ if(autoRunning)return;
+ autoCancel=false;
+ if(!currentPack){await ripPack()}
+ if(skipPack.checked&&currentPack&&!busy)await finishCurrentPack();
+}
+function stopAutoPlay(){
+ if(!skipPack.checked&&autoRunning)autoCancel=true;
+ if(!skipPack.checked&&!autoRunning&&currentPack){pullNext.disabled=false;packStatus.textContent='Auto Play off · swipe manually or tick Auto Play again.'}
 }
 
 function localDayKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -2026,12 +2116,12 @@ document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',(
  await ripPack();
 });
 packOpenCount.addEventListener('change',updatePrimaryActionButton);
-skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});
+skipPack.addEventListener('change',()=>{if(skipPack.checked)startAutoPlay();else stopAutoPlay()});newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});
 seriesBinderBtn?.addEventListener('click',()=>setBinderMode('series'));promoBinderBtn?.addEventListener('click',()=>setBinderMode('promo'));openBinderBook?.addEventListener('click',openBinderBookView);binderBookClose?.addEventListener('click',()=>binderBookDialog?.close());binderBookPrev?.addEventListener('click',()=>turnBinderBook(-1));binderBookNext?.addEventListener('click',()=>turnBinderBook(1));binderBookDialog?.addEventListener('click',e=>{if(e.target===binderBookDialog)binderBookDialog.close()});binderBookDialog?.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();turnBinderBook(-1)}else if(e.key==='ArrowRight'){e.preventDefault();turnBinderBook(1)}});
 if(binderBookPage){let binderSwipeX=null;binderBookPage.addEventListener('pointerdown',e=>{binderSwipeX=e.clientX});binderBookPage.addEventListener('pointerup',e=>{if(binderSwipeX==null)return;const dx=e.clientX-binderSwipeX;binderSwipeX=null;if(Math.abs(dx)>=48)turnBinderBook(dx<0?1:-1)});binderBookPage.addEventListener('pointercancel',()=>{binderSwipeX=null})}
 let binderResizeTimer=null;function refreshBinderBookLayout(){if(!binderBookDialog?.open)return;clearTimeout(binderResizeTimer);binderResizeTimer=setTimeout(()=>renderBinderBook(),90)}window.addEventListener('resize',refreshBinderBookLayout);window.addEventListener('orientationchange',refreshBinderBookLayout);
 [binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
-saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile()});storePreviewClose?.addEventListener('click',()=>storePreviewDialog?.close());storePreviewDialog?.addEventListener('click',e=>{if(e.target===storePreviewDialog)storePreviewDialog.close()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});
+saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile();refreshPackControls();updatePrimaryActionButton()});storePreviewClose?.addEventListener('click',()=>storePreviewDialog?.close());storePreviewDialog?.addEventListener('click',e=>{if(e.target===storePreviewDialog)storePreviewDialog.close()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});
 // --- Installable PWA ---
 let deferredInstallPrompt=null,installPromptWaiter=null;
 const isStandaloneApp=()=>window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator.standalone===true;
@@ -2141,7 +2231,8 @@ try{window.matchMedia('(display-mode: standalone)').addEventListener('change',sy
 driveConnect?.addEventListener('click',()=>connectGoogleDrive(true));
 headerDriveConnect?.addEventListener('click',()=>connectGoogleDrive(true));
 driveSave?.addEventListener('click',()=>uploadStateToDrive(true));
-driveLoad?.addEventListener('click',async()=>{if(!driveReady)return;if(confirm('Load the Google Drive save and replace the local browser save on this device?'))await downloadStateFromDrive(true)});
+driveLoad?.addEventListener('click',async()=>{if(!driveReady)return;await downloadStateFromDrive(true)});
+driveRestoreBackup?.addEventListener('click',restoreDriveRecoveryCopy);
 driveDisconnect?.addEventListener('click',()=>{if(confirm('Disconnect Google Drive from this device? Your Drive save will not be deleted.'))disconnectGoogleDrive()});
 
 exportSave.addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pokemon-pack-simulator-save.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)});importSave.addEventListener('change',async()=>{const f=importSave.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.collection)throw new Error();state={...state,...x};for(const code of SERIES_ORDER){const s=SETS[code];if(!state.seriesStats[s.name])state.seriesStats[s.name]={boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}}if(state.xp==null)state.xp=0;if(state.pokecoins==null)state.pokecoins=0;if(!state.promos)state.promos={};if(!state.setCompletionXp)state.setCompletionXp={};if(!state.binderCoinRewards)state.binderCoinRewards={};if(!state.dailyLogin)state.dailyLogin={lastDate:'',day:0};if(typeof state.tutorialCompleted!=='boolean')state.tutorialCompleted=true;if(typeof state.progressionVersion!=='number')state.progressionVersion=1;migrateProgressionToV3();state.xpVersion=1;save();refreshPackControls();checkAchievements();renderBinder();renderProfile();updateWelcome();alert('Save imported.')}catch(e){alert('That save file could not be read.')}importSave.value=''});resetSave.addEventListener('click',()=>{if(!confirm('Reset the entire binder, stats, daily quests and achievements across all series?'))return;state={profileName:state.profileName||'Trainer',collection:{},boxesOpened:0,packsOpened:0,cardsPulled:0,bigHits:0,recent:[],favorite:null,seriesStats:Object.fromEntries(SERIES_ORDER.map(c=>[SETS[c].name,{boxes:0,packs:0,cards:0,bigHits:0,rarities:{}}])),daily:{date:localDayKey(),packs:0,cards:0,bigHits:0,rarities:{},seriesPacks:{},completedAll:false},dailyStreak:0,lastDailyComplete:'',achievements:{},achievementStats:{maxBatch:0,godPacks:0},xp:0,pokecoins:0,promos:{},setCompletionXp:{},binderCoinRewards:{},dailyLogin:{lastDate:'',day:0},tutorialCompleted:false,progressionVersion:3,xpVersion:1};save();neutralSeriesState();renderBinder();renderProfile();updateWelcome()});
@@ -2175,6 +2266,7 @@ soundToggle.addEventListener('click',()=>SoundFX.setEnabled(!SoundFX.enabled));S
 musicToggle?.addEventListener('click',()=>MusicPlayer.setEnabled(!MusicPlayer.enabled));
 musicVolume?.addEventListener('input',()=>MusicPlayer.setVolume((Number(musicVolume.value)||0)/100));
 MusicPlayer.updateUi();
+skipPack.checked=false;updateDriveConnectButtons();
 document.addEventListener('pointerdown',e=>{MusicPlayer.handleActivation();if(shouldKeepScreenAwake())requestWakeLock();if(!SoundFX.enabled)return;const b=e.target.closest?.('button');if(b&&b!==soundToggle&&!b.disabled)SoundFX.click()},{passive:true});
 fullscreenBtn.addEventListener('click',()=>toggleFullscreen(false));
 document.addEventListener('fullscreenchange',syncFullscreenState);
