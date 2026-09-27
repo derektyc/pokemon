@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pokémon Pack Simulator">
 <meta name="application-name" content="Pokémon Pack Simulator">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/pokeball-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/pokeball-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="assets/pokeball-512.png">
@@ -2051,6 +2051,50 @@ function syncInstallAppButton(){
  else if(isIosDevice())installAppBtn.textContent='⬇ Add to Home Screen';
  else installAppBtn.textContent='⬇ Install App';
 }
+
+async function getPwaDiagnostics(){
+ const out={ok:true,checks:[]};
+ const add=(name,ok,detail)=>{out.checks.push({name,ok,detail});if(!ok)out.ok=false};
+ const secure=location.protocol==='https:'||['localhost','127.0.0.1'].includes(location.hostname);
+ add('HTTPS',secure,secure?location.origin:'Open the GitHub Pages https:// URL, not a downloaded/local file.');
+ const manifestLink=document.querySelector('link[rel="manifest"]');
+ if(!manifestLink){add('Manifest link',false,'No <link rel="manifest"> found.');return out}
+ try{
+   const manifestUrl=new URL(manifestLink.getAttribute('href'),location.href).href;
+   const mr=await fetch(manifestUrl,{cache:'no-store'});
+   add('Manifest file',mr.ok,`${mr.status} · ${manifestUrl}`);
+   if(mr.ok){
+     let m=null;try{m=await mr.json()}catch(e){}
+     add('Manifest JSON',!!m,m?'Valid JSON':'Could not parse JSON.');
+     if(m){
+       add('App name',!!(m.name||m.short_name),m.name||m.short_name||'Missing name/short_name');
+       add('Start URL',!!m.start_url,m.start_url||'Missing start_url');
+       add('Display mode',['standalone','fullscreen','minimal-ui','window-controls-overlay'].includes(m.display),m.display||'Missing display');
+       const icons=Array.isArray(m.icons)?m.icons:[];
+       const has192=icons.some(x=>String(x.sizes||'').split(/\s+/).includes('192x192'));
+       const has512=icons.some(x=>String(x.sizes||'').split(/\s+/).includes('512x512'));
+       add('192×192 icon',has192,has192?'Declared':'Missing from manifest');
+       add('512×512 icon',has512,has512?'Declared':'Missing from manifest');
+       for(const icon of icons.filter(x=>/192x192|512x512/.test(String(x.sizes||'')))){
+         try{const u=new URL(icon.src,manifestUrl).href;const r=await fetch(u,{cache:'no-store'});add(`Icon ${icon.sizes}`,r.ok,`${r.status} · ${u}`)}catch(e){add(`Icon ${icon.sizes}`,false,String(e))}
+       }
+       if(m.start_url){try{const u=new URL(m.start_url,manifestUrl).href;const r=await fetch(u,{cache:'no-store'});add('Launch page',r.ok,`${r.status} · ${u}`)}catch(e){add('Launch page',false,String(e))}}
+     }
+   }
+ }catch(e){add('Manifest file',false,String(e))}
+ if('serviceWorker' in navigator){
+   try{
+     const reg=await navigator.serviceWorker.getRegistration('./');
+     add('Service worker',!!reg,reg?`Registered · ${reg.scope}`:'Not registered yet. Refresh once after uploading all PWA files.');
+   }catch(e){add('Service worker',false,String(e))}
+ }else add('Service worker',false,'This browser does not support service workers.');
+ return out;
+}
+function renderPwaDiagnostics(diag){
+ const rows=diag.checks.map(c=>`<div style="margin:6px 0"><b style="color:${c.ok?'#8ce7ad':'#ffaaaa'}">${c.ok?'✓':'✕'} ${esc(c.name)}</b><div style="font-size:11px;color:var(--muted);overflow-wrap:anywhere">${esc(c.detail||'')}</div></div>`).join('');
+ return `<div style="margin-bottom:9px"><b>${diag.ok?'PWA files look reachable.':'Chrome cannot install until the failed checks below are fixed.'}</b></div>${rows}`;
+}
+
 function waitForInstallPrompt(ms=2800){
  if(deferredInstallPrompt)return Promise.resolve(deferredInstallPrompt);
  return new Promise(resolve=>{
@@ -2085,9 +2129,12 @@ installAppBtn?.addEventListener('click',async()=>{
  syncInstallAppButton();
  const secure=location.protocol==='https:'||['localhost','127.0.0.1'].includes(location.hostname);
  if(!secure){showInstallHelp('Install needs HTTPS','This app must be opened from your <b>GitHub Pages HTTPS address</b> before the browser can install it. Opening the HTML file directly from Downloads will not work.');return}
- if(isAndroidDevice()&&isChromiumBrowser())showInstallHelp('Install from Chrome','Chrome has not exposed the native install prompt yet. Open Chrome’s <b>⋮ menu</b> and choose <b>Install app</b> or <b>Add to Home screen</b>. If this is the first visit after uploading the PWA files, refresh the page once and try again.');
- else if(isChromiumBrowser())showInstallHelp('Install from your browser','The browser has not exposed the native install prompt yet. Open the browser menu and choose <b>Install Pokémon Pack Simulator</b> / <b>Install app</b>. If this is the first visit after uploading the PWA files, refresh once and try again.');
- else showInstallHelp('Install this app','This browser does not provide the automatic install prompt to the page. Use the browser menu and choose <b>Install app</b> or <b>Add to Home screen</b>, or open the site in Chrome/Edge.');
+ const diag=await getPwaDiagnostics();
+ const diagHtml=renderPwaDiagnostics(diag);
+ if(!diag.ok){showInstallHelp('PWA setup problem detected',diagHtml);return}
+ if(isAndroidDevice()&&isChromiumBrowser())showInstallHelp('Install from Chrome',diagHtml+'<br><br>The PWA files are reachable, but Chrome has not exposed the native install prompt yet. Stay on this page for at least 30 seconds, tap the page once, then try <b>Install App</b> again or use Chrome’s <b>⋮ menu → Install app</b>.');
+ else if(isChromiumBrowser())showInstallHelp('Install from your browser',diagHtml+'<br><br>The PWA files are reachable, but the native prompt is not available yet. Try the browser menu → <b>Install app</b>.');
+ else showInstallHelp('Install this app',diagHtml+'<br><br>This browser does not expose the automatic install prompt. Use its <b>Install app</b> / <b>Add to Home screen</b> option, or open the site in Chrome/Edge.');
 });
 try{window.matchMedia('(display-mode: standalone)').addEventListener('change',syncInstallAppButton)}catch(_){}
 
