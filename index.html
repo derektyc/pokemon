@@ -326,6 +326,28 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
 @media(max-width:900px){#binderBookDialog{width:99vw;max-width:99vw;height:96dvh}.binder-book-shell{padding:9px 7px;gap:7px}.binder-book-spread{gap:5px}.binder-book-page{padding:5px}.binder-book-page.left-page{padding-right:8px}.binder-book-page.right-page{padding-left:8px}.binder-book-grid{gap:4px}.binder-pocket{padding:3px;border-radius:8px}.binder-pocket img{height:calc(100% - 18px);border-radius:4px}.binder-pocket-name{font-size:6.5px;margin-top:2px}.binder-pocket-meta{font-size:5.5px}.binder-pocket-question{font-size:20px}.binder-pocket-qty{right:4px;top:4px;font-size:7px}.binder-book-title{font-size:16px}}
 @media(max-width:560px){#binderBookDialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0}.binder-book-shell{height:100dvh;padding:8px 5px calc(8px + env(safe-area-inset-bottom));gap:5px}.binder-book-head{padding-right:38px}.binder-book-title{font-size:14px}.binder-book-status{font-size:9px}.binder-book-spread{gap:3px}.binder-book-spread:after{width:6px;top:4px;bottom:4px}.binder-book-page{padding:3px;border-radius:8px}.binder-book-page.left-page{padding-right:5px;border-top-right-radius:5px;border-bottom-right-radius:5px}.binder-book-page.right-page{padding-left:5px;border-top-left-radius:5px;border-bottom-left-radius:5px}.binder-book-grid{gap:2px}.binder-pocket{padding:2px;border-radius:5px}.binder-pocket:before{inset:2px;border-radius:4px}.binder-pocket img{height:calc(100% - 12px);border-radius:3px}.binder-pocket-name{font-size:5px;line-height:1;margin-top:1px}.binder-pocket-meta{display:none}.binder-pocket-question{font-size:15px}.binder-pocket-qty{right:2px;top:2px;font-size:6px;padding:1px 3px}.binder-book-controls{grid-template-columns:1fr auto 1fr;gap:4px}.binder-book-controls button{font-size:10px;padding:7px 5px;min-height:34px}.binder-book-page-label{font-size:9px;min-width:102px}}
 
+/* 2026-09-27 responsive binder + install-state refinements */
+.binder-book-spread.single-page{grid-template-columns:minmax(0,min(660px,100%));justify-content:center;gap:0}
+.binder-book-spread.single-page:after{display:none}
+.binder-book-spread.single-page .right-page{display:none}
+.binder-book-spread.single-page .left-page{width:100%;justify-self:center;border-radius:17px;padding:8px}
+#installAppBtn.install-ready{border-color:rgba(85,209,135,.62);color:#a7f3c1}
+#installAppBtn.install-checking{opacity:.72}
+#installHelpDialog{width:min(520px,92vw);padding:0;background:#151922;color:var(--text);border:1px solid var(--line)}
+@media(max-width:680px){
+ #binderBookDialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+ .binder-book-shell{height:100dvh;padding:8px 7px calc(8px + env(safe-area-inset-bottom));gap:6px}
+ .binder-book-spread{grid-template-columns:1fr!important;gap:0!important}
+ .binder-book-spread:after{display:none!important}
+ .binder-book-spread .right-page{display:none!important}
+ .binder-book-page.left-page{padding:5px!important;border-radius:10px!important}
+ .binder-book-grid{gap:4px}
+ .binder-pocket{padding:3px;border-radius:7px}
+ .binder-pocket img{height:calc(100% - 17px)}
+ .binder-pocket-name{font-size:6.5px}.binder-pocket-meta{font-size:5.5px}
+ .binder-book-status{font-size:9px}.binder-book-page-label{font-size:10px;min-width:96px}
+}
+
 </style>
 </head>
 
@@ -335,7 +357,7 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
  <div class="top">
   <div>
    <div class="title">Pokémon Pack Simulator</div>
-   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · HEADER GOOGLE DRIVE + TWO-PAGE BINDER · 2026-09-27</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
+   <div class="sub" style="font-size:10px;color:#55d187;font-weight:900">BUILD · PWA INSTALL + RESPONSIVE BINDER · 2026-09-27</div><div class="sub" id="seriesSubtitle">Ninja Spinner (M4) · Japanese Pack Ripper + Collection Binder</div>
    <div class="series-picker"><label for="seriesSelect">Series</label><select id="seriesSelect"><option value="" selected>Select a series</option><option value="M1L">Mega Brave (M1L)</option><option value="M1S">Mega Symphonia (M1S)</option><option value="M2">Inferno X (M2)</option><option value="M2a">MEGA Dream ex (M2a)</option><option value="M3">Munikis Zero (M3)</option><option value="M4">Ninja Spinner (M4)</option><option value="M5">Abyss Eye (M5)</option><option value="M6">Storm Emeralda (M6)</option></select><span class="set-chip" id="setCardCount">Binder — / —</span></div>
   </div>
   <div class="header-controls"><span class="level-chip header-economy-chip">Lv <span id="headerLevel">1</span><span class="header-coin-sep">·</span><span class="header-coin">🪙 <span id="headerCoins">0</span></span></span><div class="sub" id="welcomeText">Local profile</div><button class="secondary" id="soundToggle" type="button" aria-pressed="true">🔊 Sound On</button><button class="secondary" id="musicToggle" type="button" aria-pressed="true">🎵 Music On</button><label class="secondary" style="display:inline-flex;align-items:center;gap:8px;padding-right:10px"><span style="font-weight:800">Vol</span><input id="musicVolume" type="range" min="0" max="100" step="1" value="40" style="width:110px"></label><button class="secondary" id="fullscreenBtn" type="button">⛶ Full Screen</button><button class="secondary header-install-btn" id="installAppBtn" type="button">⬇ Install App</button><button class="secondary header-drive-btn" id="headerDriveConnect" type="button">☁ Connect Google Drive</button></div>
@@ -439,7 +461,7 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
   </section>
  </main>
 
- <div class="footer-note" id="footerNote">Build: Header Google Drive + Two-Page Binder 2026-09-27 · Background music: “Menu Theme” by tamesu, CC0 via OpenGameArt. · Multi-series simulator across Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Munikis Zero, Ninja Spinner, Abyss Eye, and Storm Emeralda. Standard boxes are simulated as 30 packs with 5 cards each. Store Super Packs now open in fixed rarity order, with 7 cards for most series and 10 cards for MEGA Dream ex. Premium promo cards are exclusive store rewards and do not appear in normal packs. Simulated collation is not an official Pokémon Company guarantee.</div>
+ <div class="footer-note" id="footerNote">Build: PWA Install + Responsive Binder 2026-09-27 · Background music: “Menu Theme” by tamesu, CC0 via OpenGameArt. · Multi-series simulator across Mega Brave, Mega Symphonia, Inferno X, MEGA Dream ex, Munikis Zero, Ninja Spinner, Abyss Eye, and Storm Emeralda. Standard boxes are simulated as 30 packs with 5 cards each. Store Super Packs now open in fixed rarity order, with 7 cards for most series and 10 cards for MEGA Dream ex. Premium promo cards are exclusive store rewards and do not appear in normal packs. Simulated collation is not an official Pokémon Company guarantee.</div>
 </div></div>
 
 <div id="tutorialOverlay" class="tutorial-overlay" hidden aria-modal="true" role="dialog" aria-label="Simulator tutorial">
@@ -469,6 +491,14 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
 </dialog>
 
 <dialog id="storePreviewDialog" aria-label="Store image preview"><button id="storePreviewClose" class="close-x" type="button" aria-label="Close preview">×</button><div class="store-preview-inner"><img id="storePreviewImg" alt=""><div id="storePreviewTitle"></div></div></dialog>
+<dialog id="installHelpDialog" aria-label="Install Pokémon Pack Simulator">
+ <button id="installHelpClose" class="close-x" type="button" aria-label="Close install help">×</button>
+ <div class="modal-inner">
+  <h3 id="installHelpTitle" style="margin:0 42px 8px 0">Install Pokémon Pack Simulator</h3>
+  <div id="installHelpText" class="modal-meta" style="font-size:13px;line-height:1.65"></div>
+  <div class="modal-actions" style="justify-content:flex-end"><button class="primary" id="installHelpOkay" type="button">Got it</button></div>
+ </div>
+</dialog>
 <dialog id="binderBookDialog" aria-label="Binder viewer">
  <button id="binderBookClose" class="close-x" type="button" aria-label="Close binder">×</button>
  <div class="binder-book-shell">
@@ -480,8 +510,8 @@ button.binder-pocket{cursor:pointer}button.binder-pocket:disabled{cursor:default
 <dialog id="cardDialog"><button id="closeDialog" class="close-x" aria-label="Close">×</button><div class="modal-inner"><div class="modal-card"><img id="modalImg" alt=""><div><h3 id="modalName"></h3><div id="modalMeta" class="modal-meta"></div><div id="modalOwned" class="modal-meta"></div><div class="modal-actions"><button class="primary" id="setFavorite">Set as favourite</button><button class="secondary" id="sellDuplicate">Sell 1 Duplicate</button><button class="secondary" id="modalClose2">Close</button></div></div></div></div></dialog><div id="updateBanner" role="status"><span>New version available.</span><button class="primary" id="updateNow" type="button">Update now</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
-const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','musicToggle','musicVolume','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','headerDriveConnect','installAppBtn','driveSave','driveLoad','driveDisconnect','storePreviewDialog','storePreviewClose','storePreviewImg','storePreviewTitle','binderDescription','binderProgressLabel','binderSellNote','seriesBinderBtn','promoBinderBtn','openBinderBook','binderBookDialog','binderBookClose','binderBookTitle','binderBookStatus','binderBookPage','binderBookGrid','binderBookGridRight','binderBookPrev','binderBookNext','binderBookPageLabel'].forEach(id=>E[id]=$(id));
-const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,musicToggle,musicVolume,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,headerDriveConnect,installAppBtn,driveSave,driveLoad,driveDisconnect,storePreviewDialog,storePreviewClose,storePreviewImg,storePreviewTitle,binderDescription,binderProgressLabel,binderSellNote,seriesBinderBtn,promoBinderBtn,openBinderBook,binderBookDialog,binderBookClose,binderBookTitle,binderBookStatus,binderBookPage,binderBookGrid,binderBookGridRight,binderBookPrev,binderBookNext,binderBookPageLabel}=E;
+const E={};['boosterWrap','boosterImg','cardShell','emptyState','pullName','pullNo','hitLine','pullNext','skipPack','nextPack','openPack','packStatus','packGrid','swipeCard','rarityTag','cardImg','cardStackLayer','stackCount','packsLeft','cardsPulled','uniqueCards','bigHits','binderSearch','binderRarity','binderOwned','binderSort','binderGrid','completionText','completionPct','completionBar','profileName','saveName','lifeBoxes','lifePacks','lifeCards','lifeUnique','lifeBig','seriesStats','dailyQuestGrid','dailyQuestMeta','achievementGrid','achievementSummary','achievementToast','recentGrid','bestGrid','favoriteArea','welcomeText','cardDialog','modalName','modalMeta','modalOwned','modalImg','setFavorite','closeDialog','modalClose2','exportSave','importSave','resetSave','newBox','fullscreenBtn','soundToggle','musicToggle','musicVolume','seriesSelect','seriesSubtitle','setCardCount','packOpenCount','autoStopRarity','boxSummary','updateBanner','updateNow','entryOverlay','enterSimulatorBtn','headerLevel','headerCoins','playerLevel','levelXpText','levelXpBar','profileCoins','nextUnlockText','unlockList','sellAllDuplicates','sellDuplicate','storeCoins','storeLocked','storeContent','storeGrid','promoGrid','levelToast','achievementExpand','superPackGrid','purchaseDialog','purchaseDialogTitle','purchaseDialogText','purchaseConfirmBtn','purchaseCancelBtn','replayTutorial','tutorialOverlay','tutorialStep','tutorialTitle','tutorialText','tutorialBack','tutorialSkip','tutorialNext','tutorialHint','driveStatus','driveConnect','headerDriveConnect','installAppBtn','driveSave','driveLoad','driveDisconnect','storePreviewDialog','storePreviewClose','storePreviewImg','storePreviewTitle','installHelpDialog','installHelpClose','installHelpTitle','installHelpText','installHelpOkay','binderDescription','binderProgressLabel','binderSellNote','seriesBinderBtn','promoBinderBtn','openBinderBook','binderBookDialog','binderBookClose','binderBookTitle','binderBookStatus','binderBookPage','binderBookGrid','binderBookGridRight','binderBookPrev','binderBookNext','binderBookPageLabel'].forEach(id=>E[id]=$(id));
+const {boosterWrap,boosterImg,cardShell,emptyState,pullName,pullNo,hitLine,pullNext,skipPack,nextPack,openPack,packStatus,packGrid,swipeCard,rarityTag,cardImg,cardStackLayer,stackCount,packsLeft,cardsPulled,uniqueCards,bigHits,binderSearch,binderRarity,binderOwned,binderSort,binderGrid,completionText,completionPct,completionBar,profileName,saveName,lifeBoxes,lifePacks,lifeCards,lifeUnique,lifeBig,seriesStats,dailyQuestGrid,dailyQuestMeta,achievementGrid,achievementSummary,achievementToast,recentGrid,bestGrid,favoriteArea,welcomeText,cardDialog,modalName,modalMeta,modalOwned,modalImg,setFavorite,closeDialog,modalClose2,exportSave,importSave,resetSave,newBox,fullscreenBtn,soundToggle,musicToggle,musicVolume,seriesSelect,seriesSubtitle,setCardCount,packOpenCount,autoStopRarity,boxSummary,updateBanner,updateNow,entryOverlay,enterSimulatorBtn,headerLevel,headerCoins,playerLevel,levelXpText,levelXpBar,profileCoins,nextUnlockText,unlockList,sellAllDuplicates,sellDuplicate,storeCoins,storeLocked,storeContent,storeGrid,promoGrid,levelToast,achievementExpand,superPackGrid,purchaseDialog,purchaseDialogTitle,purchaseDialogText,purchaseConfirmBtn,purchaseCancelBtn,replayTutorial,tutorialOverlay,tutorialStep,tutorialTitle,tutorialText,tutorialBack,tutorialSkip,tutorialNext,tutorialHint,driveStatus,driveConnect,headerDriveConnect,installAppBtn,driveSave,driveLoad,driveDisconnect,storePreviewDialog,storePreviewClose,storePreviewImg,storePreviewTitle,installHelpDialog,installHelpClose,installHelpTitle,installHelpText,installHelpOkay,binderDescription,binderProgressLabel,binderSellNote,seriesBinderBtn,promoBinderBtn,openBinderBook,binderBookDialog,binderBookClose,binderBookTitle,binderBookStatus,binderBookPage,binderBookGrid,binderBookGridRight,binderBookPrev,binderBookNext,binderBookPageLabel}=E;
 // --- Built-in sound engine (Web Audio API; no external audio files required) ---
 const SoundFX=(()=>{
  let ctx=null,master=null;
@@ -1736,23 +1766,30 @@ function appendBinderBookPocket(grid,item){
  if(owned&&binderMode!=='promo'&&countOwned(item)>1){const qty=document.createElement('div');qty.className='binder-pocket-qty';qty.textContent=`×${countOwned(item)}`;p.appendChild(qty)}
  if(owned)p.addEventListener('click',()=>binderBookOpenItem(item));grid.appendChild(p)
 }
+function binderBookPagesPerView(){
+ const w=Math.max(window.innerWidth||0,document.documentElement?.clientWidth||0),h=Math.max(window.innerHeight||0,document.documentElement?.clientHeight||0);
+ return (w>=980||(w>=700&&w>h))?2:1;
+}
 function renderBinderBook(direction=0){
  if(!binderBookGrid||!binderBookGridRight)return;
- const items=activeBinderBookItems(),totalPages=Math.max(1,Math.ceil(items.length/9)),totalSpreads=Math.max(1,Math.ceil(totalPages/2));
- binderBookPageIndex=Math.max(0,Math.min(totalSpreads-1,binderBookPageIndex));
- const start=binderBookPageIndex*18,leftItems=items.slice(start,start+9),rightItems=items.slice(start+9,start+18),ownedTotal=items.filter(binderBookOwned).length;
- const leftPage=binderBookPageIndex*2+1,rightPage=Math.min(totalPages,leftPage+1);
+ const items=activeBinderBookItems(),totalPages=Math.max(1,Math.ceil(items.length/9)),pagesPerView=binderBookPagesPerView();
+ if(pagesPerView===2)binderBookPageIndex=Math.floor(Math.max(0,binderBookPageIndex)/2)*2;
+ binderBookPageIndex=Math.max(0,Math.min(Math.max(0,totalPages-pagesPerView),binderBookPageIndex));
+ if(pagesPerView===2&&binderBookPageIndex%2)binderBookPageIndex=Math.max(0,binderBookPageIndex-1);
+ const start=binderBookPageIndex*9,leftItems=items.slice(start,start+9),rightItems=pagesPerView===2?items.slice(start+9,start+18):[],ownedTotal=items.filter(binderBookOwned).length;
+ const leftPage=binderBookPageIndex+1,rightPage=Math.min(totalPages,leftPage+1);
+ binderBookPage?.classList.toggle('single-page',pagesPerView===1);
  binderBookTitle.textContent=binderMode==='promo'?'Premium Promo Binder':(CURRENT_SERIES?`${SETS[CURRENT_SERIES].name} Binder`:'Binder');
- binderBookStatus.textContent=`${ownedTotal} / ${items.length} collected · 3×3 pockets per page · 2-page spread`;
- binderBookPageLabel.textContent=totalPages<=1?`Page 1 / 1`:`Pages ${leftPage}–${rightPage} / ${totalPages}`;
- binderBookPrev.disabled=binderBookPageIndex<=0;binderBookNext.disabled=binderBookPageIndex>=totalSpreads-1;
+ binderBookStatus.textContent=`${ownedTotal} / ${items.length} collected · 3×3 pockets per page · ${pagesPerView===2?'2-page spread':'1-page mobile view'}`;
+ binderBookPageLabel.textContent=pagesPerView===2&&totalPages>1?`Pages ${leftPage}–${rightPage} / ${totalPages}`:`Page ${leftPage} / ${totalPages}`;
+ binderBookPrev.disabled=binderBookPageIndex<=0;binderBookNext.disabled=binderBookPageIndex+pagesPerView>=totalPages;
  binderBookGrid.innerHTML='';binderBookGridRight.innerHTML='';
  for(let i=0;i<9;i++)appendBinderBookPocket(binderBookGrid,leftItems[i]);
- for(let i=0;i<9;i++)appendBinderBookPocket(binderBookGridRight,rightItems[i]);
+ if(pagesPerView===2)for(let i=0;i<9;i++)appendBinderBookPocket(binderBookGridRight,rightItems[i]);
  if(direction&&binderBookPage){binderBookPage.classList.remove('flip-next','flip-prev');void binderBookPage.offsetWidth;binderBookPage.classList.add(direction>0?'flip-next':'flip-prev');setTimeout(()=>binderBookPage?.classList.remove('flip-next','flip-prev'),300)}
 }
 function openBinderBookView(){const items=activeBinderBookItems();if(!items.length){showLevelToast(binderMode==='promo'?'No promo cards are available.':'Select a series first.');return}binderBookPageIndex=0;renderBinderBook();if(!binderBookDialog.open)binderBookDialog.showModal()}
-function turnBinderBook(delta){if(binderBookAnimating)return;const totalPages=Math.max(1,Math.ceil(activeBinderBookItems().length/9)),spreads=Math.max(1,Math.ceil(totalPages/2)),next=binderBookPageIndex+delta;if(next<0||next>=spreads)return;binderBookAnimating=true;binderBookPageIndex=next;renderBinderBook(delta);setTimeout(()=>binderBookAnimating=false,300)}
+function turnBinderBook(delta){if(binderBookAnimating)return;const totalPages=Math.max(1,Math.ceil(activeBinderBookItems().length/9)),step=binderBookPagesPerView(),next=binderBookPageIndex+(delta*step);if(next<0||next>=totalPages)return;binderBookAnimating=true;binderBookPageIndex=next;renderBinderBook(delta);setTimeout(()=>binderBookAnimating=false,300)}
 function openCard(c){dialogCard=c;modalName.textContent=c.name;modalMeta.textContent=`${SETS[c.set].name} (${c.set}) · ${c.no} · ${c.rarity}`;const n=countOwned(c);modalOwned.textContent=n?`Owned: ${n} cop${n===1?'y':'ies'}`:'Not owned yet';setImg(modalImg,c);setFavorite.textContent=state.favorite===c.id?'★ Favourite':'Set as favourite';applyFeatureLocks();cardDialog.showModal()}
 function renderCardStrip(el,ids){el.innerHTML='';for(const id of ids){const c=BY_ID[id];if(!c)continue;const d=document.createElement('button');d.type='button';d.className='slot owned';d.innerHTML=`<img alt=""><div class="slot-name">${esc(c.name)}</div><div class="slot-meta">${c.set} · ${c.rarity}</div>`;setImg(d.querySelector('img'),c);d.addEventListener('click',()=>openCard(c));el.appendChild(d)}}
 function renderProfile(){profileName.value=state.profileName||'Trainer';renderLevelUI();lifeBoxes.textContent=state.boxesOpened||0;lifePacks.textContent=state.packsOpened||0;lifeCards.textContent=state.cardsPulled||0;lifeUnique.textContent=uniqueCount();lifeBig.textContent=state.bigHits||0;seriesStats.innerHTML='<div class="series-row head"><span>Series</span><span>Boxes</span><span>Packs</span><span>Cards</span><span>Hits</span></div>'+SERIES_ORDER.map(code=>{const s=SETS[code],x=state.seriesStats[s.name]||{};return `<div class="series-row"><strong>${esc(s.name)} (${code})</strong><span>${x.boxes||0}</span><span>${x.packs||0}</span><span>${x.cards||0}</span><span>${x.bigHits||0}</span></div>`}).join('');renderCardStrip(recentGrid,state.recent.slice(0,12));const best=Object.keys(state.collection).filter(id=>state.collection[id]>0&&BY_ID[id]).map(id=>BY_ID[id]).sort((a,b)=>(RANK[b.rarity]||0)-(RANK[a.rarity]||0)).slice(0,12);renderCardStrip(bestGrid,best.map(c=>c.id));const fav=BY_ID[state.favorite];if(fav){favoriteArea.innerHTML='';const d=document.createElement('button');d.className='slot owned';d.style.maxWidth='180px';d.innerHTML=`<img alt=""><div class="slot-name">${esc(fav.name)}</div><div class="slot-meta">${fav.set} · ${fav.no} · ${fav.rarity}</div>`;setImg(d.querySelector('img'),fav);d.addEventListener('click',()=>openCard(fav));favoriteArea.appendChild(d)}else favoriteArea.textContent='No favourite selected yet. Open a card in the binder to set one.'}
@@ -1992,22 +2029,39 @@ packOpenCount.addEventListener('change',updatePrimaryActionButton);
 skipPack.addEventListener('click',finishCurrentPack);newBox.addEventListener('click',()=>{if(stopUnlimited())return;if(!CURRENT_SERIES)return;makeBox()});sellAllDuplicates.addEventListener('click',sellAllDuplicateCards);sellDuplicate.addEventListener('click',()=>sellOneDuplicate(dialogCard));seriesSelect.addEventListener('change',()=>{const next=seriesSelect.value;if(currentPack&&!confirm('Switch series? Current pack/box progress will reset, but your binder and lifetime stats are saved.')){seriesSelect.value=CURRENT_SERIES;return}if(!next){neutralSeriesState();return}activateSeries(next,true);tutorialSeriesChosen()});
 seriesBinderBtn?.addEventListener('click',()=>setBinderMode('series'));promoBinderBtn?.addEventListener('click',()=>setBinderMode('promo'));openBinderBook?.addEventListener('click',openBinderBookView);binderBookClose?.addEventListener('click',()=>binderBookDialog?.close());binderBookPrev?.addEventListener('click',()=>turnBinderBook(-1));binderBookNext?.addEventListener('click',()=>turnBinderBook(1));binderBookDialog?.addEventListener('click',e=>{if(e.target===binderBookDialog)binderBookDialog.close()});binderBookDialog?.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();turnBinderBook(-1)}else if(e.key==='ArrowRight'){e.preventDefault();turnBinderBook(1)}});
 if(binderBookPage){let binderSwipeX=null;binderBookPage.addEventListener('pointerdown',e=>{binderSwipeX=e.clientX});binderBookPage.addEventListener('pointerup',e=>{if(binderSwipeX==null)return;const dx=e.clientX-binderSwipeX;binderSwipeX=null;if(Math.abs(dx)>=48)turnBinderBook(dx<0?1:-1)});binderBookPage.addEventListener('pointercancel',()=>{binderSwipeX=null})}
+let binderResizeTimer=null;function refreshBinderBookLayout(){if(!binderBookDialog?.open)return;clearTimeout(binderResizeTimer);binderResizeTimer=setTimeout(()=>renderBinderBook(),90)}window.addEventListener('resize',refreshBinderBookLayout);window.addEventListener('orientationchange',refreshBinderBookLayout);
 [binderSearch,binderRarity,binderOwned,binderSort].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',renderBinder));document.querySelectorAll('[data-ach-filter]').forEach(b=>b.addEventListener('click',()=>{achievementFilter=b.dataset.achFilter;document.querySelectorAll('[data-ach-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAchievements()}));
 saveName.addEventListener('click',()=>{state.profileName=(profileName.value.trim()||'Trainer').slice(0,24);save();updateWelcome();renderProfile()});storePreviewClose?.addEventListener('click',()=>storePreviewDialog?.close());storePreviewDialog?.addEventListener('click',e=>{if(e.target===storePreviewDialog)storePreviewDialog.close()});closeDialog.addEventListener('click',()=>cardDialog.close());modalClose2.addEventListener('click',()=>cardDialog.close());setFavorite.addEventListener('click',()=>{if(!dialogCard)return;state.favorite=dialogCard.id;save();checkAchievements();renderProfile();setFavorite.textContent='★ Favourite'});
 // --- Installable PWA ---
-let deferredInstallPrompt=null;
+let deferredInstallPrompt=null,installPromptWaiter=null;
 const isStandaloneApp=()=>window.matchMedia?.('(display-mode: standalone)')?.matches||window.navigator.standalone===true;
 const isIosDevice=()=>/iphone|ipad|ipod/i.test(navigator.userAgent||'');
+const isAndroidDevice=()=>/android/i.test(navigator.userAgent||'');
+const isChromiumBrowser=()=>/Chrome|Chromium|CriOS|Edg/i.test(navigator.userAgent||'')&&!/Firefox|FxiOS/i.test(navigator.userAgent||'');
+function showInstallHelp(title,html){
+ if(!installHelpDialog){alert(String(html).replace(/<[^>]+>/g,' '));return}
+ installHelpTitle.textContent=title;installHelpText.innerHTML=html;if(!installHelpDialog.open)installHelpDialog.showModal();
+}
 function syncInstallAppButton(){
  if(!installAppBtn)return;
- const installed=isStandaloneApp();
- installAppBtn.hidden=installed;
- installAppBtn.textContent=deferredInstallPrompt?'⬇ Install App':(isIosDevice()?'⬇ Add to Home Screen':'⬇ Install App');
- fullscreenBtn.hidden=installed;
- if(installed)requestWakeLock();
+ const installed=isStandaloneApp();installAppBtn.hidden=installed;fullscreenBtn.hidden=installed;
+ installAppBtn.classList.toggle('install-ready',!!deferredInstallPrompt);installAppBtn.classList.remove('install-checking');
+ if(installed){requestWakeLock();return}
+ if(deferredInstallPrompt)installAppBtn.textContent='⬇ Install App';
+ else if(isIosDevice())installAppBtn.textContent='⬇ Add to Home Screen';
+ else installAppBtn.textContent='⬇ Install App';
 }
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;syncInstallAppButton()});
-window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;syncInstallAppButton();requestWakeLock()});
+function waitForInstallPrompt(ms=2800){
+ if(deferredInstallPrompt)return Promise.resolve(deferredInstallPrompt);
+ return new Promise(resolve=>{
+   let done=false;const finish=v=>{if(done)return;done=true;clearTimeout(t);if(installPromptWaiter===finish)installPromptWaiter=null;resolve(v)};
+   const t=setTimeout(()=>finish(deferredInstallPrompt),ms);installPromptWaiter=finish;
+ });
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;if(installPromptWaiter)installPromptWaiter(e);syncInstallAppButton()});
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;syncInstallAppButton();requestWakeLock();showLevelToast('Pokémon Pack Simulator installed!')});
+installHelpClose?.addEventListener('click',()=>installHelpDialog?.close());installHelpOkay?.addEventListener('click',()=>installHelpDialog?.close());
+installHelpDialog?.addEventListener('click',e=>{if(e.target===installHelpDialog)installHelpDialog.close()});
 installAppBtn?.addEventListener('click',async()=>{
  if(isStandaloneApp()){syncInstallAppButton();return}
  if(deferredInstallPrompt){
@@ -2015,8 +2069,25 @@ installAppBtn?.addEventListener('click',async()=>{
    try{await p.prompt();await p.userChoice}catch(_){}
    syncInstallAppButton();return;
  }
- if(isIosDevice())alert('On iPhone/iPad: open this site in Safari, tap Share, then choose “Add to Home Screen”.');
- else alert('Install is available when this site is served from GitHub Pages over HTTPS. You can also use your browser menu and choose “Install app” or “Add to Home screen”.');
+ if(isIosDevice()){
+   showInstallHelp('Add to Home Screen','On <b>iPhone/iPad</b>, open this site in <b>Safari</b>, tap the <b>Share</b> button, then choose <b>Add to Home Screen</b>. iOS does not allow a web page to open that install sheet directly.');return;
+ }
+ installAppBtn.classList.add('install-checking');installAppBtn.textContent='Checking install…';
+ try{
+   if('serviceWorker' in navigator&&location.protocol!=='file:'){
+     const reg=await Promise.race([navigator.serviceWorker.ready.catch(()=>null),new Promise(resolve=>setTimeout(()=>resolve(null),1200))]);if(reg)reg.update().catch(()=>{});
+   }
+   const prompt=await waitForInstallPrompt(2200);
+   if(prompt){
+     deferredInstallPrompt=null;try{await prompt.prompt();await prompt.userChoice}catch(_){}syncInstallAppButton();return;
+   }
+ }catch(_){}
+ syncInstallAppButton();
+ const secure=location.protocol==='https:'||['localhost','127.0.0.1'].includes(location.hostname);
+ if(!secure){showInstallHelp('Install needs HTTPS','This app must be opened from your <b>GitHub Pages HTTPS address</b> before the browser can install it. Opening the HTML file directly from Downloads will not work.');return}
+ if(isAndroidDevice()&&isChromiumBrowser())showInstallHelp('Install from Chrome','Chrome has not exposed the native install prompt yet. Open Chrome’s <b>⋮ menu</b> and choose <b>Install app</b> or <b>Add to Home screen</b>. If this is the first visit after uploading the PWA files, refresh the page once and try again.');
+ else if(isChromiumBrowser())showInstallHelp('Install from your browser','The browser has not exposed the native install prompt yet. Open the browser menu and choose <b>Install Pokémon Pack Simulator</b> / <b>Install app</b>. If this is the first visit after uploading the PWA files, refresh once and try again.');
+ else showInstallHelp('Install this app','This browser does not provide the automatic install prompt to the page. Use the browser menu and choose <b>Install app</b> or <b>Add to Home screen</b>, or open the site in Chrome/Edge.');
 });
 try{window.matchMedia('(display-mode: standalone)').addEventListener('change',syncInstallAppButton)}catch(_){}
 
@@ -2083,6 +2154,7 @@ async function registerPwa(){
  try{
    const reg=await navigator.serviceWorker.register('./service-worker.js',{scope:'./',updateViaCache:'none'});
    pwaRegistration=reg;
+   syncInstallAppButton();
    if(reg.waiting)showPwaUpdate(reg);
    reg.addEventListener('updatefound',()=>{
      const worker=reg.installing;if(!worker)return;
